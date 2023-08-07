@@ -2,7 +2,7 @@
 
 The Canary Gates App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
 
-![image](https://github.com/iamsourabh-in/canary-gates/assets/22702292/2e81d81f-7e32-435d-9093-acc61e0e517f)
+![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/asdasd.png)
 
 
 ## Version Info
