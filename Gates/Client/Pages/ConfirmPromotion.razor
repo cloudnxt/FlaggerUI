@@ -1,0 +1,93 @@
+﻿@page "/confirmpromotion"
+@using Gates.Shared
+@using Gates.Shared.Data;
+@using Gates.Shared.Enums;
+@inject NavigationManager _navigationManager
+@inject HttpClient Http
+
+<PageTitle>Confirm Promotion</PageTitle>
+
+<h3>Confirm Promotion</h3>
+
+@if (gates == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudTable Items="@gates" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Namespace</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Waiting</MudTh>
+            <MudTh>Webhook State</MudTh>
+            <MudTh>Action</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
+
+            <MudTd DataLabel="Url">
+                @if (@context.Status == "Close")
+                {
+                    <MudChip Color="Color.Secondary"> @context.Status</MudChip>
+                }
+                else
+                {
+                    <MudChip Color="Color.Success"> @context.Status</MudChip>
+                }
+            </MudTd>
+            <MudTd>
+                @if (@context.Waiting)
+                {
+                    <MudIcon Icon="@Icons.Custom.Uncategorized.Radioactive" Style="font-size: 4rem;" Color="Color.Secondary" />
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Style="font-size: 4rem;" />
+
+                }
+            </MudTd>
+            <MudTd DataLabel="State">@context.WebhookState</MudTd>
+            <MudTd>
+                @if (@context.Status == "Close")
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(e => Approve(@context))">Open</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="@(e => Reject(@context))">Close</MudButton>
+
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    private GateModel[]? gates;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private async Task Approve(GateModel gate)
+    {
+        await Http.PostAsJsonAsync($"api/gate/open", gate);
+        await Refresh();
+    }
+
+    private async Task Reject(GateModel gate)
+    {
+        await Http.PostAsJsonAsync($"api/gate/close", gate);
+        await Refresh();
+    }
+
+    async Task Refresh()
+    {
+        gates = await Http.GetFromJsonAsync<GateModel[]>($"api/gate?webhookState={WebhookStateEnum.ConfirmPromotion}");
+    }
+}
+

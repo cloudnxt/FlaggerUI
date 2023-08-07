@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gates-server
+  namespace: gates
+spec:
+  selector:
+    app: gates-server
+  ports:
+    - name: http
+      port: 80  # The port exposed by the Service (HTTP)
+      targetPort: 80  # The port on the container (HTTP)
+    - name: https
+      port: 443  # The port exposed by the Service (HTTPS)
+      targetPort: 443  # The port on the container (HTTPS)
+  type: ClusterIP

@@ -1,0 +1,102 @@
+﻿### Create an App ###
+
+POST http://localhost:5080/api/AdmissionWebhook
+Content-Type: application/json
+
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1",
+  "request": {
+    "uid": "9d92f45e-40d0-45da-89dd-b883b99268d6",
+    "kind": {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment"
+    },
+    "resource": {
+      "group": "apps",
+      "version": "v1",
+      "resource": "deployments"
+    },
+    "name": "uploader-api2",
+    "namespace": "uploader",
+    "operation": "CREATE",
+    "userInfo": {
+      "username": "docker-for-desktop",
+      "groups": [
+        "system:masters",
+        "system:authenticated"
+      ]
+    },
+    "object": {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "uploader-api2",
+        "namespace": "uploader",
+        "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
+        "generation": 1,
+        "creationTimestamp": "2023-08-02T22:47:29Z",
+        "labels": {
+          "app": "uploader-api",
+          "metrics-scraper": "prom",
+          "version": "v1"
+        },
+        "annotations": {
+          "app": "uploader-api",
+          "enable-canary-gates": "true"
+        }
+      },
+      "spec": {
+        "replicas": 3,
+        "template": {
+          "spec": {
+            "containers": [
+              {
+                "name": "uploader-api",
+                "image": "rohitrustagi007/evo_uploader:0.1.0",
+                "ports": [
+                  {
+                    "name": "uploader-api",
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "200m",
+                    "memory": "256Mi"
+                  },
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "128Mi"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "strategy": {
+          "type": "RollingUpdate",
+          "rollingUpdate": {
+            "maxUnavailable": "25%",
+            "maxSurge": "25%"
+          }
+        },
+        "revisionHistoryLimit": 10,
+        "progressDeadlineSeconds": 600
+      },
+      "status": {
+        
+      }
+    },
+    "oldObject": null,
+    "dryRun": false,
+    "options": {
+      "kind": "CreateOptions",
+      "apiVersion": "meta.k8s.io/v1",
+      "fieldManager": "kubectl-client-side-apply",
+      "fieldValidation": "Strict"
+    }
+  }
+}

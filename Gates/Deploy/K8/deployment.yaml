@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gates-server
+  namespace: gates
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gates-server
+  template:
+    metadata:
+      labels:
+        app: gates-server
+    spec:
+      containers:
+        - name: gates-server
+          image: rohitrustagi007/gates-server:0.0.5
+          imagePullPolicy: Always 
+          ports:
+          - containerPort: 80  # HTTP port
+          - containerPort: 443  # HTTPS port

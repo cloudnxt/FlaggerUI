@@ -1,0 +1,69 @@
+﻿@page "/"
+@using Gates.Client.Shared;
+@using Gates.Shared
+@using Gates.Shared.Data;
+@using Gates.Shared.Enums;
+@inject NavigationManager _navigationManager
+@inject HttpClient Http
+
+<style>
+    .mud-chart-bar {
+        stroke-width: 10px;
+    }
+</style>
+
+<PageTitle>Index</PageTitle>
+<MudCard>
+    <MudCardContent>
+        <MudText>Story of the day</MudText>
+        <div>
+            <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Indx" XAxisLabels="@XAxisLabels" Width="100%" Height="500px" ChartOptions="chartOptions"></MudChart>
+        </div>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+    </MudCardActions>
+</MudCard>
+ 
+
+@code {
+
+    private GateModel[]? ConfirmRollout = new List<GateModel>().ToArray();
+    private GateModel[]? ConfirmTrafficIncrease = new List<GateModel>().ToArray();
+    private GateModel[]? ConfirmPromotion = new List<GateModel>().ToArray();
+    private int Indx = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public ChartOptions chartOptions = new ChartOptions();
+
+    public string[] XAxisLabels = { "ConfirmRollout", "ConfirmTrafficIncrease", "ConfirmPromotion" };
+    protected override async Task OnInitializedAsync()
+    {
+        chartOptions.LineStrokeWidth = 10;
+        await Refresh();
+    }
+
+
+    async Task Refresh()
+    {
+
+        ConfirmRollout = await Http.GetFromJsonAsync<GateModel[]>($"api/gate?webhookState={WebhookStateEnum.ConfirmRollout}");
+        ConfirmTrafficIncrease = await Http.GetFromJsonAsync<GateModel[]>($"api/gate?webhookState={WebhookStateEnum.ConfirmTrafficIncrease}");
+        ConfirmPromotion = await Http.GetFromJsonAsync<GateModel[]>($"api/gate?webhookState={WebhookStateEnum.ConfirmPromotion}");
+
+        var ConfirmRolloutOpen = ConfirmRollout.Where(g => g.Status == GateStatusEnum.Open.ToString()).Count();
+        var ConfirmTrafficIncreaseOpen = ConfirmTrafficIncrease.Where(g => g.Status == GateStatusEnum.Open.ToString()).Count();
+        var ConfirmPromotionOpen = ConfirmPromotion.Where(g => g.Status == GateStatusEnum.Open.ToString()).Count();
+
+
+        var ConfirmRolloutClose = ConfirmRollout.Where(g => g.Status == GateStatusEnum.Close.ToString()).Count();
+        var ConfirmTrafficIncreaseClose = ConfirmTrafficIncrease.Where(g => g.Status == GateStatusEnum.Close.ToString()).Count();
+        var ConfirmPromotionClose = ConfirmPromotion.Where(g => g.Status == GateStatusEnum.Close.ToString()).Count();
+
+        Series = new List<ChartSeries>() {
+            new ChartSeries() { Name = "Total", Data = new double[] { ConfirmRollout.Length, ConfirmTrafficIncrease.Length, ConfirmPromotion.Length } },
+            new ChartSeries() { Name = "Open", Data = new double[] { ConfirmRolloutOpen, ConfirmTrafficIncreaseOpen, ConfirmPromotionOpen } },
+            new ChartSeries() { Name = "Closed", Data = new double[] { ConfirmRolloutClose,ConfirmTrafficIncreaseClose, ConfirmPromotionClose } }
+        };
+    }
+}

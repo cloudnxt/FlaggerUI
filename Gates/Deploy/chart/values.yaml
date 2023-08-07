@@ -1,0 +1,8 @@
+replicaCount: 1
+image:
+  repository: rohitrustagi007/gates-server
+  tag: 0.0.24
+  pullPolicy: Never
+
+nameOverride: "gates-server"
+fullnameOverride: "gates-server"

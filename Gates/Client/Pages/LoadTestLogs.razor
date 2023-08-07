@@ -1,0 +1,57 @@
+﻿@page "/loadtestlogs/{Id:int}"
+@using Gates.Shared
+@using Gates.Shared.Data;
+@inject HttpClient Http;
+@using Gates.Shared.Enums;
+
+<PageTitle>Logs</PageTitle>
+@if (logs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        <div>
+            <h3>Logs</h3>
+        </div>
+    </div>
+
+
+     <MudPaper Width="500" Elevation="10">
+        <MudTable Height="80vh" Items="@logs" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" HorizontalScrollbar="true">
+        <HeaderContent>
+            <MudTh>Status</MudTh>
+            <MudTh>URL</MudTh>
+            <MudTh>Phase</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EventMessage">
+                @if (@context.HttpStatus == "OK")
+                {
+                    <MudChip Color="Color.Success"> @context.HttpStatus </MudChip>
+                }
+                else
+                {
+                    <MudChip Color="Color.Error"> @context.HttpStatus </MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="Name">@context.Url</MudTd>
+            <MudTd DataLabel="Namespace">@context.Response</MudTd>
+        </RowTemplate>
+    </MudTable>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private LoadTestLogModel[]? logs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        logs = await Http.GetFromJsonAsync<LoadTestLogModel[]>($"api/LoadTestLogs/{Id}");
+    }
+
+}

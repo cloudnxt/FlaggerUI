@@ -1,0 +1,228 @@
+﻿### Create an App ###
+
+POST http://localhost:5080/api/app
+Content-Type: application/json
+
+{
+  "Name": "MyApp1",
+  "Url": "https://myapp.com",
+  "Namespace": "myapp",
+  "Phase" : "Success",
+  "Replicas":2,
+  "ContainerPorts" : "80/tcp",
+  "Image": "tets/test:0.0.1"
+}
+
+### Get All Apps ###
+
+GET http://localhost:5080/api/app
+
+### Get an App by ID ###
+
+GET http://localhost:5080/api/app/1
+
+### Update an App ###
+
+PUT http://localhost:5080/api/app/1
+Content-Type: application/json
+
+{
+  "Name": "MyApp1",
+  "Url": "https://myapp.com",
+  "Namespace": "myapp",
+  "Phase" : "Success"
+}
+### Delete an App ###
+
+DELETE http://localhost:5080/api/app/1
+
+### Create an Event ###
+
+POST http://localhost:5080/api/event
+Content-Type: application/json
+
+{
+  "Name": "MyApp1",
+  "Namespace": "myapp",
+  "Phase": "test",
+  "Status": "abc",
+  "metadata":{
+    "WebhookState": "confirmrollout",
+    "EventMessage": "created event?name=MyApp3&_namespace=myappevent?name=MyApp3&_namespace=myappevent?name=MyApp3&_namespace=myappevent?name=MyApp3&_namespace=myapp"
+  }
+}
+
+### Get Events
+GET http://localhost:5080/api/event?name=MyApp3&_namespace=myapp
+
+
+### Create an Gate ###
+
+POST http://localhost:5080/api/Gate
+Content-Type: application/json
+
+{
+  "Name": "nginx",
+  "Namespace": "default",
+  "Phase": "initial",
+  "Status": "abc",
+  "metadata":{
+    "WebhookState": "ConfirmRollout",
+    "Action": "created"
+  }
+}
+
+
+### Get Gates
+GET http://localhost:5080/api/gate?webhookState=ConfirmPromotion
+
+### check Gates
+POST http://localhost:5080/api/Gate/check
+Content-Type: application/json
+
+{
+  "Name": "MyApp1",
+  "Namespace": "myapp",
+  "Phase": "initial",
+  "Status": "open",
+  "metadata":{
+    "WebhookState": "ConfirmRollout",
+    "Action": "created"
+  }
+}
+
+
+
+
+### Load Test
+
+POST http://localhost:5080/api/Loadtest
+Content-Type: application/json
+
+{
+  "Name": "podinfo",
+  "Namespace": "default",
+  "Phase":"Loadtest",
+  "metadata":{
+    "WebhookState": "Loadtest",
+    "Url": "https://localhost:5433/api/apps",
+    "Method": "initial",
+    "Payload": "abc",
+    "NoOfRequests": 10
+  }
+}
+
+### GET Test
+
+GET http://localhost:5080/api/Loadtest
+Content-Type: application/json
+
+
+
+
+### Addmision Gates Create
+POST http://localhost:5080/api/AdmissionWebhook
+Content-Type: application/json
+
+{
+  "kind": "AdmissionReview",
+  "apiVersion": "admission.k8s.io/v1",
+  "request": {
+    "uid": "9d92f45e-40d0-45da-89dd-b883b99268d6",
+    "kind": {
+      "group": "apps",
+      "version": "v1",
+      "kind": "Deployment"
+    },
+    "resource": {
+      "group": "apps",
+      "version": "v1",
+      "resource": "deployments"
+    },
+    "name": "nginx-deployment",
+    "namespace": "uploader",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "uploader-api",
+        "namespace": "uploader",
+        "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
+        "generation": 1,
+        "creationTimestamp": "2023-08-02T22:47:29Z",
+        "labels": {
+          "app": "uploader-api",
+          "metrics-scraper": "prom",
+          "version": "v1"
+        },
+        "annotations": {
+          "app": "uploader-api",
+          "enable-canary-gates": "true"
+        }
+      }
+    },
+    "oldObject": null,
+    "dryRun": false
+    
+  }
+}
+
+
+
+### Addmision Gates Delete
+POST https://localhost:5080/api/AdmissionWebhook
+Content-Type: application/json
+
+
+{
+    "ApiVersion": "admission.k8s.io/v1",
+    "Kind": "AdmissionReview",
+    "Request": {
+        "Uid": "3a3eb807-c21b-44c4-a44e-5bc76bf4caa4",
+        "Kind": {
+            "Group": "",
+            "Version": "v1",
+            "Kind": "Pod"
+        },
+        "Resource": {
+            "Group": "",
+            "Version": "v1",
+            "Resource": "pods"
+        },
+        "Namespace": "default",
+        "Operation": "DELETE",
+        "UserInfo": {
+            "Username": "docker-for-desktop",
+            "Groups": [
+                "system:masters",
+                "system:authenticated"
+            ]
+        },
+        "Object": null,
+        "OldObject": {
+            "Metadata": {
+                "Name": "nginx",
+                "Namespace": "default",
+                "Labels": null,
+                "Annotations": {
+                    "enable-canary-gates": "true",
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\u0022apiVersion\u0022:\u0022v1\u0022,\u0022kind\u0022:\u0022Pod\u0022,\u0022metadata\u0022:{\u0022annotations\u0022:{\u0022enable-canary-gates\u0022:\u0022true\u0022},\u0022name\u0022:\u0022nginx\u0022,\u0022namespace\u0022:\u0022default\u0022},\u0022spec\u0022:{\u0022containers\u0022:[{\u0022image\u0022:\u0022nginx:1.14.2\u0022,\u0022name\u0022:\u0022nginx\u0022,\u0022ports\u0022:[{\u0022containerPort\u0022:80}]}]}}\n"
+                }
+            },
+            "Spec": {
+                "Containers": [
+                    {
+                        "Name": "nginx",
+                        "Image": "nginx:1.14.2",
+                        "Ports": [
+                            {
+                                "ContainerPort": 80
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

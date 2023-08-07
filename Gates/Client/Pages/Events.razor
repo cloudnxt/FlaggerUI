@@ -1,0 +1,81 @@
+﻿@page "/events"
+@using Gates.Shared
+@using Gates.Shared.Data;
+@inject HttpClient Http;
+@using Gates.Shared.Enums;
+
+<PageTitle>Events</PageTitle>
+@if (events == null || apps == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudPaper Width="500" Elevation="10">
+    <MudTable Height="80vh" Items="@events" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" FixedHeader="true" Filter="new Func<EventModel,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Events</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Created</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Namespace</MudTh>
+            <MudTh>Phase</MudTh>
+            <MudTh>Webhook State</MudTh>
+            <MudTh>Event Message</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="EventMessage">@context.Created.ToLongTimeString()</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
+            <MudTd DataLabel="Phase">@context.Phase</MudTd>
+            <MudTd DataLabel="WebhookState">@context.WebhookState</MudTd>
+            <MudTd DataLabel="EventMessage">@context.EventMessage</MudTd>
+            
+        </RowTemplate>
+    </MudTable>
+    </MudPaper>
+}
+
+@code {
+    private EventModel[]? events;
+    private AppModel[]? apps;
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private EventModel selectedItem1 = null;
+    private string searchString = "";
+    protected override async Task OnInitializedAsync()
+    {
+        events = await Http.GetFromJsonAsync<EventModel[]>($"api/event");
+        apps = await Http.GetFromJsonAsync<AppModel[]>("api/app");
+    }
+
+    private async Task Filter(ChangeEventArgs e)
+    {
+        var app_space = e.Value.ToString().Split("#-#");
+        var app = app_space[0];
+        var space = app_space[1];
+        // Call the API endpoint to register the App
+        events = await Http.GetFromJsonAsync<EventModel[]>($"api/event?name={app}&_namespace={space}");
+    }
+
+   
+    private bool FilterFunc1(EventModel element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(EventModel element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Namespace.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.EventMessage.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}
