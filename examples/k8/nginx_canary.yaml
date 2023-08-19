@@ -1,7 +1,7 @@
-apiVersion: flagger.app/v1beta1
+apiVersion: flagger.app/v1beta1Deployment
 kind: Canary
 metadata:
-  name: podinfo
+  name: nginx
   namespace: default
 spec:
   skipAnalysis: false
@@ -11,7 +11,7 @@ spec:
   targetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: podinfo
+    name: nginx
   # the maximum time in seconds for the canary deployment
   # to make progress before rollback (default 600s)
   progressDeadlineSeconds: 60
@@ -21,7 +21,7 @@ spec:
   #   kind: HorizontalPodAutoscaler
   #   name: podinfo
   service:
-    port: 9898
+    port: 80
     portDiscovery: true
   analysis:
     # schedule interval (default 60s)
@@ -33,24 +33,26 @@ spec:
     # Prometheus checks based on 
     # http_request_duration_seconds histogram
     metrics:
-      - name: "request-success-rate-custom"
-        templateRef:
-          name: request-success-rate-custom
+      - name: request-success-rate
         thresholdRange:
           min: 99
         interval: 1m
+      - name: request-duration
+        thresholdRange:
+          max: 500
+        interval: 30s
     # acceptance/load testing hooks
     webhooks:
       - name: "start gate"
         type: confirm-rollout
-        url: http://gates-server.default.svc/api/Gate/check
+        url: http://flagger-ui.default.svc/api/Gate/check
         metadata:
           Action: "pass"
           WebhookState: "ConfirmRollout"
 
       - name: "confirm-traffic-increase"
         type: confirm-traffic-increase
-        url: http://gates-server.default.svc/api/Gate/check
+        url: http://flagger-ui.default.svc/api/Gate/check
         metadata:
           Action: "pass"
           WebhookState: "ConfirmTrafficIncrease"
@@ -58,63 +60,32 @@ spec:
           
       - name: "load test"
         type: rollout
-        url: http://gates-server.default.svc/api/Loadtest
+        url: http://flagger-ui.default.svc/api/Loadtest
         metadata:
           Action: "pass"
           WebhookState: "rollout"
           Method: GET
-          Url: http://podinfo-canary.default.svc:9898/healthz
+          Url: http://nginx-canary.default.svc
           NoOfRequests: "100"
           Payload: ""
       
       - name: "promotion gate"
         type: confirm-promotion
-        url: http://gates-server.default.svc/api/Gate/check
+        url: http://flagger-ui.default.svc/api/Gate/check
         metadata:
           Action: "pass"
           WebhookState: "ConfirmPromotion"
 
       - name: "Send to Events"
         type: event
-        url: http://gates-server.default.svc/api/Event
+        url: http://flagger-ui.default.svc/api/Event
         metadata:
           Action: "pass"
           WebhookState: "Event"
 
       - name: "rollback gate"
         type: rollback
-        url: http://gates-server.default.svc/api/Gate/Check
+        url: http://flagger-ui.default.svc/api/Gate/Check
         metadata:
           Action: "pass"
           WebhookState: "Rollback"
-
----
-apiVersion: flagger.app/v1beta1
-kind: MetricTemplate
-metadata:
-  name: request-success-rate-custom
-  namespace: default
-spec:
-  provider:
-    type: prometheus
-    address: http://flagger-prometheus.flagger-system:9090
-  query: |
-        sum(
-            rate(
-              http_request_duration_seconds_count{
-                kubernetes_namespace="{{ namespace }}",
-                kubernetes_pod_name=~"{{ target }}-[0-9a-zA-Z]+(-[0-9a-zA-Z]+)",
-                status!~"5.*"
-              }[{{ interval }}]
-            )
-          ) 
-          / 
-          sum(
-            rate(
-              http_request_duration_seconds_count{
-                kubernetes_namespace="{{ namespace }}",
-                kubernetes_pod_name=~"{{ target }}-[0-9a-zA-Z]+(-[0-9a-zA-Z]+)"
-              }[{{ interval }}]
-            )
-          ) 
-          * 100

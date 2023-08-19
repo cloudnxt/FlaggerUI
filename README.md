@@ -1,6 +1,6 @@
-# Canary Gates App
+# Flagger UI
 
-The Canary Gates App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
+The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
 
 ![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/asdasd.png)
 
@@ -38,18 +38,6 @@ To use the Manual Gates App in conjunction with Flagger in your CI/CD pipeline, 
 4. **Usage**: Start your CI/CD pipeline with Flagger. When a gate is reached, Flagger will trigger a webhook event, and the Manual Gates App will receive it, pausing the deployment. Relevant users will be notified to review and approve or reject the deployment.
 
 5. **Monitoring**: Utilize the provided dashboard to monitor and manage the deployments at each gate. Track approvals, rejections, and comments for auditing and compliance purposes. The dashboard provides visibility into the status of ongoing deployments and facilitates seamless collaboration among team members.
-
-## Contributions
-
-Contributions to the Manual Gates App are welcome! If you encounter any issues, have suggestions, or would like to contribute new features or improvements, please feel free to submit a pull request.
-
-## License
-
-The Manual Gates App is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Contact
-
-For any questions or inquiries, please contact our support team at support@example.com.
 
 
 ## Prepare Docker Image
@@ -152,3 +140,15 @@ spec:
           cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test:9898/"
 
 ```
+## Contributions
+
+Contributions to the Manual Gates App are welcome! If you encounter any issues, have suggestions, or would like to contribute new features or improvements, please feel free to submit a pull request.
+
+## License
+
+The Manual Gates App is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## Contact
+
+For any questions or inquiries, please contact our support team at support@example.com.
+

@@ -4,5 +4,5 @@ image:
   tag: 0.0.24
   pullPolicy: Never
 
-nameOverride: "gates-server"
-fullnameOverride: "gates-server"
+nameOverride: "flagger-ui"
+fullnameOverride: "flagger-ui"
