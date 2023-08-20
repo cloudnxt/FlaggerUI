@@ -11,4 +11,10 @@
         public bool GatesEnabled { get; set; } = true;
     }
 
+
+    public class AppDetailModel : AppModel
+    {
+
+        public string FlaggerStatus { get; set; }
+    }
 }

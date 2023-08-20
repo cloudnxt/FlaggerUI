@@ -1,0 +1,55 @@
+﻿@page "/applications/details/{Id:int}"
+@using Gates.Shared
+@using Gates.Shared.Data;
+@inject NavigationManager _navigationManager
+@inject HttpClient Http
+
+<PageTitle>Apps</PageTitle>
+<div>
+        <h3>Apps</h3>
+</div>
+@if (app== null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudPaper>
+        <MudCard>
+            <MudCardContent>
+                <MudText Typo="Typo.h5">@app.Name</MudText>
+                <MudText Typo="Typo.body2">@app.Namespace</MudText>
+                <MudText Typo="Typo.body2">@app.ContainerPorts </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Generate Canary</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Force Delete </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private AppModel? app;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+
+    async Task Refresh()
+    {
+        app = await Http.GetFromJsonAsync<AppModel>($"api/app/{Id}");
+    }
+
+    void Register()
+    {
+        _navigationManager.NavigateTo("/register/app");
+    }
+  
+}
+

@@ -3,6 +3,7 @@ using Gates.Server.Service;
 using Gates.Shared.Data;
 using Gates.Shared.Enums;
 using Gates.Shared.Requests;
+using Gates.Shared.ServiceModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gates.Server.Controllers
@@ -15,13 +16,15 @@ namespace Gates.Server.Controllers
         private readonly IMapper _mapper;
         private readonly IGateService _gateService;
         private readonly IEventService _eventService;
+        private readonly IMetricService _metricService;
 
-        public AppController(IAppService appService, IMapper mapper, IGateService gateService, IEventService eventService, ILogger<AppController> logger)
+        public AppController(IAppService appService, IMapper mapper, IGateService gateService, IEventService eventService, ILogger<AppController> logger, IMetricService metricService)
         {
             _appService = appService;
             _mapper = mapper;
             _gateService = gateService;
             _eventService = eventService;
+            _metricService = metricService;
         }
 
         [HttpGet]
@@ -32,9 +35,12 @@ namespace Gates.Server.Controllers
         }
 
         [HttpGet("{appId}")]
-        public async Task<ActionResult<AppModel>> GetAppById(int appId)
+        public async Task<ActionResult<AppDetailModel>> GetAppById(int appId)
         {
-            var app = await _appService.GetAppById(appId);
+            AppDetailModel app = (AppDetailModel) await _appService.GetAppById(appId);
+
+            app.FlaggerStatus = _metricService.GetFlaggerStatusForApp(new MetricRequest());
+
             if (app == null)
                 return NotFound();
 
