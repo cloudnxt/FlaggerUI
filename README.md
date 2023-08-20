@@ -1,13 +1,16 @@
-<p align="center" style="float:left;" >
-  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:200px;" alt="Flagger UI"/> 
+<p align="left" style="float:left;" >
+  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:50px;" alt="Flagger UI"/> 
 </p>
+
+
+![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/apps.png)
 
 <h1>Flagger UI</h1>
 The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. 
 
 It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
 
-![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/apps.png)
+
 ---
 
 
@@ -56,7 +59,9 @@ To use the Manual Gates App in conjunction with Flagger in your CI/CD pipeline, 
 
 **Installation**
 
-Clone the repository and configure the required environment variables as specified in the project documentation. OR You could you the docker image avilalbe here : `rohitrustagi007/canary-gates:1.0.7`. Flagger UI can currently be installed using helm charts. This can be done either getting the repo locally or from the helm repo
+Clone the repository and configure the required environment variables as specified in the project documentation. OR You could you the docker image available here : `cloudnxt/flagger-ui:0.0.1`. 
+
+Flagger UI can currently be installed using helm charts. This can be done either getting the repo locally or from the helm repo
 
 
 ```sh
