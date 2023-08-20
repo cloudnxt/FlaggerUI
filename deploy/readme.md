@@ -19,7 +19,6 @@ helm uninstall flagger-ui
 
 
 
-
 kubectl apply -f ingress_app.yaml
 
 kubectl apply -f ./examples/k8/podinfo.yaml
