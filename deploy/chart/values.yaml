@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: rohitrustagi007/gates-server
+  repository: cloudnxt/flagger-ui:0.0.1
   tag: 0.0.24
   pullPolicy: Never
 
