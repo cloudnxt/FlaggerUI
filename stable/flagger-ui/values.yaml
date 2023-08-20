@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: cloudnxt/flagger-ui
   tag: 0.0.1
-  pullPolicy: Never
+  pullPolicy: Always
 
 nameOverride: "flagger-ui"
 fullnameOverride: "flagger-ui"
