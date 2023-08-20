@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    if: github.ref != 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     name: CI
     runs-on: ubuntu-latest
 
@@ -34,7 +34,7 @@ jobs:
       #   name: Run Tests
       #   run: dotnet test --no-build --verbosity normal
   calculate-version:
-    if: github.ref != 'refs/heads/main' 
+    if: github.ref == 'refs/heads/main' 
     name: Calculate Version
     runs-on: ubuntu-latest
     outputs:
@@ -95,7 +95,7 @@ jobs:
           echo "CommitDate: ${{ steps.gitversion.outputs.commitDate }}"
 
   build-container:
-    if: github.ref != 'refs/heads/main' 
+    if: github.ref == 'refs/heads/main' 
     name: Docker Build and Publish
     runs-on: ubuntu-latest
     env:

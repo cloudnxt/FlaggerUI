@@ -50,7 +50,24 @@ To use the Manual Gates App in conjunction with Flagger in your CI/CD pipeline, 
 - **Kubernetes** - version 1.24 
 
 
-## Flow
+## Understanding Hooks
+
+The canary analysis can be extended with webhooks. Flagger will call each webhook URL and determine from the response status code (HTTP 2xx) if the canary is failing or not.
+
+Below are the hooks that can be configured for flagger UI. 
+
+* `confirm-rollout` hooks are executed before scaling up the canary deployment and can be used for manual approval. The rollout is paused until the hook returns a successful HTTP status code.
+
+* `rollout` hooks are executed during the analysis on each iteration before the metric checks. If a rollout hook call fails the canary advancement is paused and eventfully rolled back.
+
+* `confirm-traffic-increase` hooks are executed right before the weight on the canary is increased. The canary advancement is paused until this hook returns HTTP 200.
+
+* `confirm-promotion` hooks are executed before the promotion step. The canary promotion is paused until the hooks return HTTP 200. While the promotion is paused, Flagger will continue to run the metrics checks and rollout hooks.
+
+* `rollback` hooks are executed while a canary deployment is in either Progressing or Waiting status. This provides the ability to rollback during analysis or while waiting for a confirmation. If a rollback hook returns a successful HTTP status code, Flagger will stop the analysis and mark the canary release as failed.
+
+* `event` hooks are executed every time Flagger emits a Kubernetes event. When configured, every action that Flagger takes during a canary deployment will be sent as JSON via an HTTP POST request.
+
 ![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/asdasd.png)
 
 ## Installation
@@ -94,7 +111,6 @@ metadata:
 spec:
   ...
 ```
-
 
 Once the above deployment is applied to the cluster, the deployment will be visible in the flagger-ui app, along with its gates configured withthe default status `close`
 
@@ -192,30 +208,30 @@ spec:
 
 ```
 
-**Usage**
+## Usage
 
 Start your CI/CD pipeline with Flagger. When a gate is reached, Flagger will trigger a webhook event, and the Manual Gates App will receive it, pausing the deployment. Relevant users will be notified to review and approve or reject the deployment.
 
-**Monitoring**
+## Monitoring
 
-Utilize the provided dashboard to monitor and manage the deployments at each gate. Track approvals, rejections, and comments for auditing and compliance purposes. The dashboard provides visibility into the status of ongoing deployments and facilitates seamless collaboration among team members.
+Utilize the provided dashboard to monitor and manage the deployments at each gate. Track approvals, rejections, and comments for auditing and compliance purposes. The dashboard provides visibility into the status of ongoing deployments.
 
----
-## Development Guides
+
+# Development Guides
 
 If trying to get this repo locally and use it or to build you own image.
 
 See [Developer Guide](DEVELOPER.md) for further details.
 
-## Contributions
+# Contributions
 
 Contributions to the Manual Gates App are welcome! If you encounter any issues, have suggestions, or would like to contribute new features or improvements, please feel free to submit a pull request.
 
-## License
+# License
 
 The Manual Gates App is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
-## Contact
+# Contact
 
 For any questions or inquiries, please contact us at sourabh.rustagi@hotmail.com.
 
