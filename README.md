@@ -1,4 +1,4 @@
-<p align="left" style="float:left;" >
+<p align="center" style="float:left;" >
   <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:100px;" alt="Flagger UI"/> 
 </p>
 
