@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     paths:
-      - 'deploy/**'
+      - 'stable/**'
 
 jobs:
   lint-chart:
