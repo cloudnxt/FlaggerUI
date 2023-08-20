@@ -200,7 +200,6 @@ docker run -p 3000:3000 rohitrustagi007/flagger-ui:latest
 ```
 
 
-
 ## Contributions
 
 Contributions to the Manual Gates App are welcome! If you encounter any issues, have suggestions, or would like to contribute new features or improvements, please feel free to submit a pull request.
@@ -211,5 +210,5 @@ The Manual Gates App is licensed under the [MIT License](https://opensource.org/
 
 ## Contact
 
-For any questions or inquiries, please contact our support team at support@example.com.
+For any questions or inquiries, please contact us at sourabh.rustagi@hotmail.com.
 
