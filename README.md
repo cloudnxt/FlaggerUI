@@ -1,9 +1,8 @@
-# Flagger UI
-<p align="center" style="width:200px;">
-  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" alt="Flagger UI"/>
+<p align="center" style="float:left;" >
+  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:200px;" alt="Flagger UI"/> 
 </p>
 
-
+<h1>Flagger UI</h1>
 The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. 
 
 It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
