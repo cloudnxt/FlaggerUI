@@ -1,6 +1,8 @@
 # Flagger UI
 
-The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
+The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. 
+
+It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
 
 ![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/asdasd.png)
 
@@ -11,9 +13,11 @@ The Flagger UI App is a webhook-enabled application designed to provide manual c
 
 - First Beta Release
 
-rest here in changelog
 
 ## Features
+
+- **Plug and play**: Seamlessly integrates with your existing app setting with just an annotation to the deployment. The annotation will add the app tot the dashboard automatically. 
+
 
 - **Webhook Integration**: Seamlessly integrates with your existing CI/CD pipeline via webhooks, following the same webhook specifications described in the [Flagger documentation](https://docs.flagger.app/usage/webhooks). This ensures easy compatibility and interoperability with your Flagger-based deployment automation.
 
@@ -53,6 +57,32 @@ docker build -t rohitrustagi007/canary-gates:1.0.2 .
 docker tag rohitrustagi007/canary-gates:1.0.1 rohitrustagi007/canary-gates:1.0.2
 docker run -p 3000:3000 rohitrustagi007/canary-gates:1.0.2
 docker push rohitrustagi007/canary-gates:1.0.2
+```
+
+## Getting Started 
+Flagger UI can currently be installed using helm charts. This can be done either getting the repo locally or from the helm repo
+
+
+### Installing flagger ui using helm chart.
+
+```sh
+helm install flagger-ui flaggerui
+```
+### Add App to Dashboard
+
+ Enable your app to be visible by flagger UI. To make you deployment visible to flagger ui, add the annotation to your deployment.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo
+  labels:
+    app: podinfo
+  annotations:
+    enable-canary-gates: "true" # add this line to your deployment.
+spec:
+  ...
 ```
 
 ## Deploy to Kubernetes

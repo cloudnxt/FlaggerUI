@@ -4,13 +4,13 @@ POST http://localhost:5080/api/app
 Content-Type: application/json
 
 {
-  "Name": "MyApp1",
-  "Url": "https://myapp.com",
-  "Namespace": "myapp",
-  "Phase" : "Success",
+  "Name": "podinfo",
+  "Url": "podinfo.default.svc",
+  "Namespace": "default",
+  "Phase" : "Progressing",
   "Replicas":2,
-  "ContainerPorts" : "80/tcp",
-  "Image": "tets/test:0.0.1"
+  "ContainerPorts" : "9898/TCP, 9797/TCP, 9999/TCP",
+  "Image": "ghcr.io/stefanprodan/podinfo:6.0.3"
 }
 
 ### Get All Apps ###
