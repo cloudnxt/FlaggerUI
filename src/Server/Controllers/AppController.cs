@@ -4,7 +4,6 @@ using Gates.Shared.Data;
 using Gates.Shared.Enums;
 using Gates.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 
 namespace Gates.Server.Controllers
 {
@@ -25,7 +24,6 @@ namespace Gates.Server.Controllers
             _eventService = eventService;
         }
 
-        // GET: api/app
         [HttpGet]
         public async Task<ActionResult<List<AppModel>>> GetAllApps()
         {
@@ -33,7 +31,6 @@ namespace Gates.Server.Controllers
             return Ok(apps);
         }
 
-        // GET: api/app/{appId}
         [HttpGet("{appId}")]
         public async Task<ActionResult<AppModel>> GetAppById(int appId)
         {
@@ -44,7 +41,6 @@ namespace Gates.Server.Controllers
             return Ok(app);
         }
 
-        // POST: api/app
         [HttpPost]
         public async Task<ActionResult<int>> CreateApp(AddAppApiRequest request)
         {

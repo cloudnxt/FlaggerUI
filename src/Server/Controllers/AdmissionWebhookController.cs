@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using Gates.Server.Service;
 using Gates.Shared.Data;
-using Gates.Shared.Enums;
 using Gates.Shared.Extension;
 using Gates.Shared.Requests;
-using Gates.Shared.Responses;
 using KubeReview.Extensions;
 using KubeReview.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 using System.Text.Json;
 
 namespace Gates.Server.Controllers
