@@ -1,5 +1,7 @@
 # Flagger UI
 
+![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png)
+
 The Flagger UI App is a webhook-enabled application designed to provide manual control over deployment gates in a continuous integration and deployment (CI/CD) pipeline. 
 
 It allows users to manually review and approve or reject deployments at specific stages of the pipeline.
@@ -78,6 +80,20 @@ metadata:
 spec:
   ...
 ```
+
+
+Once the above deployment is applied to the cluster, the deployment will be visible in the flagger-ui app, along with its gates configured withthe default status `close`
+
+The gate will look like below.
+
+![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/confirmrollout.png)
+
+
+
+
+The thumbs up sign shows all good, the waiting icon will change from thumbs up to `radioactive` to show the webhook is currently waiting.
+
+
 
 **Webhook Integration**
 
