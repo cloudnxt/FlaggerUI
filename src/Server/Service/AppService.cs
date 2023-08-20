@@ -1,17 +1,27 @@
-﻿using Gates.Client;
+﻿using AutoMapper;
+using Gates.Client;
 using Gates.Server.Data;
 using Gates.Shared.Data;
+using Gates.Shared.Enums;
+using Gates.Shared.Requests;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Gates.Server.Service
 {
     public class AppService : IAppService
     {
         private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
+        private readonly IGateService _gateService;
+        private readonly IEventService _eventService;
 
-        public AppService(AppDbContext dbContext)
+        public AppService(AppDbContext dbContext,IMapper mapper, IGateService gateService, IEventService eventService)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
+            _gateService = gateService;
+            _eventService = eventService;
         }
 
         public async Task<List<AppModel>> GetAllApps()
@@ -28,6 +38,10 @@ namespace Gates.Server.Service
         {
             _dbContext.Apps.Add(app);
             await _dbContext.SaveChangesAsync();
+
+            AddAppEvent(app);
+            CreateAppGates(app);
+
             return app.Id;
         }
 
@@ -43,6 +57,9 @@ namespace Gates.Server.Service
             if (app == null)
                 return false;
 
+            _gateService.RemoveGate(appId);
+            RemoveAppEvent(app);
+
             _dbContext.Apps.Remove(app);
             return await _dbContext.SaveChangesAsync() > 0;
         }
@@ -50,6 +67,40 @@ namespace Gates.Server.Service
         public async Task<AppModel> GetAppNameAndSpace(string app, string space)
         {
             return await _dbContext.Apps.Where(a=>a.Name == app && a.Namespace == space).FirstOrDefaultAsync();
+        }
+
+
+        private void AddAppEvent(AppModel request)
+        {
+            var model = _mapper.Map<EventModel>(request);
+            model.Id = 0;
+            model.Phase = "New App";
+            model.EventMessage = "Registered";
+            _eventService.CreateEvent(model);
+        }
+
+        private void RemoveAppEvent(AppModel request)
+        {
+            var model = _mapper.Map<EventModel>(request);
+            model.Id = 0;
+            model.Phase = "Remove App";
+            model.EventMessage = "De-Registered";
+            _eventService.CreateEvent(model);
+        }
+
+        private void CreateAppGates(AppModel request)
+        {
+            foreach (var field in typeof(WebhookStateEnum).GetFields(BindingFlags.Static | BindingFlags.Public))
+            {
+                _gateService.AddGate(new GateModel()
+                {
+                    AppId = request.Id,
+                    Name = request.Name,
+                    Namespace = request.Namespace,
+                    WebhookState = field.Name.ToString(),
+                    Status = GateStatusEnum.Close.ToString()
+                });
+            }
         }
     }
 }

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\Gates.Client.csproj" />
+    <ProjectReference Include="..\KubeReview\KubeReview.csproj" />
     <ProjectReference Include="..\Shared\Gates.Shared.csproj" />
   </ItemGroup>
 

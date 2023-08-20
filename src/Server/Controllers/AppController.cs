@@ -3,7 +3,6 @@ using Gates.Server.Service;
 using Gates.Shared.Data;
 using Gates.Shared.Enums;
 using Gates.Shared.Requests;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
@@ -54,8 +53,6 @@ namespace Gates.Server.Controllers
             {
                 var appModel = _mapper.Map<AppModel>(request);
                 var appId = await _appService.CreateApp(appModel);
-                AddEvent(request);
-                CreateGates(request);
                 return CreatedAtAction(nameof(GetAppById), new { appId }, appId);
             }
             else
@@ -64,24 +61,34 @@ namespace Gates.Server.Controllers
             }
         }
 
-        private void AddEvent(AddAppApiRequest request)
+        [HttpPost("Disable")]
+        public async Task<ActionResult<int>> DisableAllGates(AddAppApiRequest request)
         {
-            var model = _mapper.Map<EventModel>(request);
-            model.EventMessage = "Registered";
-            _eventService.CreateEvent(model);
+            var app = await _appService.GetAppNameAndSpace(request.Name, request.Namespace);
+            if (app != null)
+            {
+                _gateService.ModifyAllGatesStatus(app.Id, GateStatusEnum.Close);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
-        private void CreateGates(AddAppApiRequest request)
+
+        [HttpPost("Enable")]
+        public async Task<ActionResult<int>> EnableAllGates(AppModel request)
         {
-            foreach (var field in typeof(WebhookStateEnum).GetFields(BindingFlags.Static | BindingFlags.Public))
+            var app = await _appService.GetAppNameAndSpace(request.Name, request.Namespace);
+            if (app != null)
             {
-                _gateService.AddGate(new GateModel()
-                {
-                    Name = request.Name,
-                    Namespace = request.Namespace,
-                    WebhookState = field.Name.ToString(),
-                    Status = GateStatusEnum.Close.ToString()
-                }) ;
+                _gateService.ModifyAllGatesStatus(app.Id, GateStatusEnum.Open);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
             }
         }
 

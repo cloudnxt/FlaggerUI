@@ -26,6 +26,9 @@ namespace Gates.Server.Mappings
                 .ForMember(pts => pts.Method, opt => opt.MapFrom(ps => ps.Metadata.Method))
                 .ForMember(pts => pts.Payload, opt => opt.MapFrom(ps => ps.Metadata.Payload))
                 .ForMember(pts => pts.NoOfRequests, opt => opt.MapFrom(ps => ps.Metadata.NoOfRequests));
+
+
+            CreateMap<AppModel, EventModel>();
         }
     }
 }

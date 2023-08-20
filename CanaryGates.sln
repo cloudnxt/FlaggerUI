@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gates.Server", "src\Server\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gates.Shared", "src\Shared\Gates.Shared.csproj", "{D40CD76D-AA2C-4431-8962-41092241CCA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeReview", "src\KubeReview\KubeReview.csproj", "{B776C27C-776C-4C8B-B75C-731FC74BEBC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D40CD76D-AA2C-4431-8962-41092241CCA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D40CD76D-AA2C-4431-8962-41092241CCA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D40CD76D-AA2C-4431-8962-41092241CCA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B776C27C-776C-4C8B-B75C-731FC74BEBC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B776C27C-776C-4C8B-B75C-731FC74BEBC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B776C27C-776C-4C8B-B75C-731FC74BEBC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B776C27C-776C-4C8B-B75C-731FC74BEBC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

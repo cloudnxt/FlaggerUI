@@ -5,15 +5,15 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  name: {{ template "samplewh.name" . }}.eiximenis.dev
+  name: {{ template "samplewh.name" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "samplewh.name" . }}
 webhooks:
-  - name: {{ template "samplewh.name" . }}.eiximenis.dev
+  - name: {{ template "samplewh.name" . }}.default.svc
     failurePolicy: Ignore
     rules:
-      - operations: ["CREATE","DELETE"]
+      - operations: ["CREATE","DELETE","UPDATE"]
         apiGroups: ["*"]
         apiVersions: ["*"]
         resources: ["*"]
@@ -24,7 +24,8 @@ webhooks:
         path: "/api/admissionwebhook"
       caBundle: {{ $ca.Cert | b64enc }}
     sideEffects: None
-    admissionReviewVersions: ["v1"]
+    admissionReviewVersions: ["v1", "v1beta1"]
+
 ---
 apiVersion: v1
 kind: Secret

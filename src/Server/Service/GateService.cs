@@ -28,6 +28,14 @@ namespace Gates.Server.Service
             return rowsAffected > 0;
         }
 
+        public bool RemoveGate(int appId)
+        {
+            foreach (var entity in _dbContext.Gates.Where(o => o.AppId == appId))
+                _dbContext.Gates.Remove(entity);
+            int rowsAffected = _dbContext.SaveChanges();
+            return rowsAffected > 0;
+        }
+
         public void UpdateGate(GateModel model)
         {
             _dbContext.Gates.Update(model);
@@ -79,8 +87,16 @@ namespace Gates.Server.Service
             _dbContext.SaveChanges();
         }
 
-        public async Task<GateModel> GetGate(string name, string @namespace, string webhookState) {
+        public async Task<GateModel> GetGate(string name, string @namespace, string webhookState)
+        {
             return await _dbContext.Gates.Where(g => g.WebhookState == webhookState && g.Name == name && g.Namespace == @namespace).FirstOrDefaultAsync();
+        }
+
+        public void ModifyAllGatesStatus(int appId, GateStatusEnum status)
+        {
+            var gates = _dbContext.Gates.Where(g => g.AppId == appId);
+            foreach (var entity in gates)
+                CloseGate(entity);
         }
     }
 }
