@@ -60,7 +60,13 @@ Clone the repository and configure the required environment variables as specifi
 
 
 ```sh
-helm install flagger-ui flaggerui
+helm repo add flagger-ui  https://cloudnxt.github.io/FlaggerUI/
+
+helm repo update
+
+helm install flagger-ui https://cloudnxt.github.io/FlaggerUI/flagger-ui-0.0.1.tgz
+
+helm uninstall flagger-ui
 ```
 
 **Configuration** 
