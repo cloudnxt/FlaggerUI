@@ -1,5 +1,5 @@
 <p align="left" style="float:left;" >
-  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:50px;" alt="Flagger UI"/> 
+  <img src="https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/logo.png" style="width:100px;" alt="Flagger UI"/> 
 </p>
 
 
@@ -16,8 +16,8 @@ It allows users to manually review and approve or reject deployments at specific
 
 ## Prerequisites
 
-- **Flagger** - should be installed and running along with its CRD in the cluster, version 1.26 and above.
-- **Kubernetes** - version 1.24
+- **Flagger** - should be installed and running along with its CRD in the cluster, version 1.26 and above. learn more [here](https://docs.flagger.app)
+- **Kubernetes** - version 1.24 
 
 ---
 
@@ -209,72 +209,10 @@ Utilize the provided dashboard to monitor and manage the deployments at each gat
 
 ---
 ## Development Guides
+
 If trying to get this repo locally and use it or to build you own image.
 
-```sh
-
-# build image
-docker build -t <username>/flagger-ui:latest .
-
-# tag image
-docker tag <username>/canary-gates:latest <username>/flagger-ui:latest
-
-# push image
-docker push rohitrustagi007/canary-gates:<tag>
-
-# run image localy in docker.
-docker run -p 3000:3000 rohitrustagi007/flagger-ui:latest
-
-```
-
-
-# Working with repo locally
-
-```sh
-cd /deploy
-
-kubectl create ns flagger-system
-
-kubectl apply -f https://raw.githubusercontent.com/fluxcd/flagger/main/artifacts/flagger/crd.yaml
-
-helm repo update 
-
-helm upgrade -i flagger flagger/flagger --namespace flagger-system --set prometheus.install=true --set meshProvider=kubernetes
-
-
-helm install flagger-ui ./stable/flagger-ui
-
-helm uninstall flagger-ui
-
-
-
-kubectl apply -f ingress_app.yaml
-
-kubectl apply -f ./examples/k8/podinfo.yaml
-
-kubectl apply -f ./examples/k8/podinfo_canary.yaml
-
-kubectl set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.0.2
-
-
-
-kubectl apply -f ./examples/k8/nginx.yaml
-
-kubectl apply -f ./examples/k8/nginx_canary.yaml
-
-kubectl set image deployment/nginx nginx=nginx:1.14.2
-
-
-
-
-kubectl delete -f ./examples/k8/podinfo.yaml
-
-kubectl delete -f ./examples/k8/podinfo_canary.yaml
-
-kubectl delete -f ./examples/k8/nginx.yaml
-
-kubectl delete -f ./examples/k8/nginx_canary.yaml
-```
+See [Developer Guide](DEVELOPER.md) for further details.
 
 ## Contributions
 
