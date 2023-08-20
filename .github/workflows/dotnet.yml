@@ -112,7 +112,7 @@ jobs:
       
       - name: docker build
         run: |
-          docker build ./src/Uploader.Api -t ${{secrets.DOCKER_USER}}/flagger-ui:0.0.1
+          docker build ./src -t ${{secrets.DOCKER_USER}}/flagger-ui:0.0.1
       
       - name : docker push
         run: |
