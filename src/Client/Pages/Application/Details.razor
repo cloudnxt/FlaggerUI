@@ -1,6 +1,7 @@
 ﻿@page "/applications/details/{Id:int}"
 @using Gates.Shared
 @using Gates.Shared.Data;
+@using System.Text.Json;
 @inject NavigationManager _navigationManager
 @inject HttpClient Http
 
@@ -22,11 +23,20 @@ else
                 <MudText Typo="Typo.body2">@app.ContainerPorts </MudText>
                 <MudText Typo="Typo.body2">@app.FlaggerStatus </MudText>
 
-                <MudText Typo="Typo.body2"> Interval : @canary.interval </MudText>
+                <MudText Typo="Typo.body2"> Interval : @canary?.interval </MudText>
+                <MudText Typo="Typo.body2"> Threshold : @canary?.threshold </MudText>
+                <MudText Typo="Typo.body2"> StepWeight : @canary?.stepWeight </MudText>
+                <MudText Typo="Typo.body2"> MaxWeight : @canary?.maxWeight </MudText>
+
+                @foreach (var item in hooks)
+                {
+                    <MudText Typo="Typo.body2"> URL : @item.url </MudText>
+                    <MudText Typo="Typo.body2"> Type : @item.type </MudText>
+                    <MudText Typo="Typo.body2"> Name : @item.name </MudText>
+                }
             </MudCardContent>
             <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Generate Canary</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Force Delete </MudButton>
+                <MudButton Variant="Variant.Filled"  Color="Color.Primary">Generate Canary File</MudButton>
             </MudCardActions>
         </MudCard>
     </MudPaper>
@@ -40,6 +50,8 @@ else
 
     private CanaryModel? canary;
 
+    List<Webhook> hooks = new List<Webhook>();
+
     protected override async Task OnInitializedAsync()
     {
         await Refresh();
@@ -50,6 +62,10 @@ else
     {
         app = await Http.GetFromJsonAsync<AppDetailModel>($"api/app/{Id}");
         canary = await Http.GetFromJsonAsync<CanaryModel>($"api/canary/{Id}");
+        if (canary.Webhooks != null)
+        {
+            hooks = JsonSerializer.Deserialize<List<Webhook>>(canary?.Webhooks);
+        }
 
     }
 
@@ -57,6 +73,11 @@ else
     {
         _navigationManager.NavigateTo("/register/app");
     }
-  
+    public class Webhook
+    {
+        public string? name { get; set; }
+        public string? type { get; set; }
+        public string? url { get; set; }
+    }
 }
 

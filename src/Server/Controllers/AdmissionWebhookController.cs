@@ -80,6 +80,7 @@ namespace Gates.Server.Controllers
                                 Namespace = review?.Request?.Object?.Metadata?.Namespace,
                                 interval = review?.Request?.Object?.spec?.analysis?.interval,
                                 threshold = review?.Request?.Object?.spec?.analysis?.threshold,
+                                Webhooks = JsonSerializer.Serialize(review?.Request.Object?.spec?.analysis?.webhooks)
                             };
 
                             await _canaryService.CreateCanary(request);

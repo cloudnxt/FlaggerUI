@@ -41,7 +41,7 @@ namespace Gates.Server.Service
 
         public async Task<MetricResponse> GetIsAppLive(MetricRequest request)
         {
-            var result = await _httpClient.GetAsync("api/v1/query?query=http_request_duration_seconds_bucket{app=\"" + request.appname + "\",kubernetes_namespace=\"" + request.Namespace + "\"}");
+            var result = await _httpClient.GetAsync("api/v1/query?query=http_request_duration_seconds_count{app=\"" + request.appname + "\",kubernetes_namespace=\"" + request.Namespace + "\"}");
             var res = await result.Content.ReadFromJsonAsync<MetricResponse>();
 
             if (result.IsSuccessStatusCode)

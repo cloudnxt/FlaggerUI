@@ -18,7 +18,7 @@ namespace Gates
             // Add services to the container.
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseInMemoryDatabase(databaseName: "GatesApp"));

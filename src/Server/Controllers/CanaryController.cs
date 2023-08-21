@@ -34,7 +34,11 @@ namespace Gates.Server.Controllers
         public async Task<ActionResult<AppModel>> Get(int appId)
         {
             var canary = await _canaryService.GetCanaryByAppId(appId);
-            return Ok(canary);
+            if(canary != null)
+            {
+                return Ok(canary);
+            }
+            return Ok(new CanaryModel());
         }
     }
 }
