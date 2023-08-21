@@ -10,7 +10,7 @@
         <h3>Apps</h3>
     </div>
     <div style="float:right" class="mb-2">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Register" >
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Register">
             Create App
         </MudButton>
     </div>
@@ -36,7 +36,7 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nr">@context.Id </MudTd>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Name"> <MudChip Color="Color.Success" @onclick="@(e => Details(@context.Id))"> @context.Name  </MudChip></MudTd>
             <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
             <MudTd DataLabel="Url">@context.Url </MudTd>
             <MudTd DataLabel="Image">@context.Image</MudTd>
@@ -58,6 +58,7 @@ else
 }
 
 @code {
+
     private IEnumerable<AppModel>? apps;
 
     protected override async Task OnInitializedAsync()
@@ -85,6 +86,10 @@ else
     void Register()
     {
         _navigationManager.NavigateTo("/register/app");
+    }
+    void Details(int id)
+    {
+        _navigationManager.NavigateTo($"/applications/details/{id}");
     }
 }
 

@@ -28,7 +28,8 @@ namespace Gates
             builder.Services.AddScoped<IGateService, GateService>();
             builder.Services.AddScoped<ILoadTestService, LoadTestService>();
             builder.Services.AddScoped<ILogsServices, LogsServices>();
-            
+            builder.Services.AddScoped<IMetricService, PrometheusService>();
+
             builder.Services.AddHostedService<QueuedHostedService>();
             builder.Services.AddSingleton<IBackgroundTaskQueue>(_ =>
             {

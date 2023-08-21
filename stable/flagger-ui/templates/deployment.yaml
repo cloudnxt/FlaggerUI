@@ -65,3 +65,5 @@ spec:
               value: https://*:443
             - name: Kestrel__Endpoints__Http__Url
               value: http://*:80
+            - name: METRIC_SERVER
+              value: {{ .Values.metricServer }}
