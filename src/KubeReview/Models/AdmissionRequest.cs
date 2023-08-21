@@ -34,6 +34,29 @@
         public int replicas { get; set; }
         public Template? template { get; set; } // This should be a Dictionary since it contains a nested object
 
+        public TargetRef? targetRef { get; set; }
+
+        public TargetAnalysis? analysis { get; set; }
+
+    }
+
+    public class TargetAnalysis
+    {
+        public string? interval { get; set; }
+        public int? threshold { get; set; }
+        public int? iterations { get; set; }
+        public int? maxWeight { get; set; }
+        public int? stepWeight { get; set; }
+
+        public List<TargetWebhook>? webhooks { get; set; }
+
+    }
+
+    public class TargetWebhook
+    {
+        public string? name { get; set; }
+        public string? type { get; set; }
+        public string? url { get; set; }
     }
 
     public class Template
@@ -66,5 +89,12 @@
     {
         public string? kind { get; set; }
         public string? apiVersion { get; set; }
+    }
+
+    public class TargetRef
+    {
+        public string? kind { get; set; }
+        public string? apiVersion { get; set; }
+        public string? name { get; set; }
     }
 }

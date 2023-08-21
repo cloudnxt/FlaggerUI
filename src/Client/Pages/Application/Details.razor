@@ -8,7 +8,7 @@
 <div>
         <h3>Apps</h3>
 </div>
-@if (app== null)
+@if (app == null || canary == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,6 +21,8 @@ else
                 <MudText Typo="Typo.body2">@app.Namespace</MudText>
                 <MudText Typo="Typo.body2">@app.ContainerPorts </MudText>
                 <MudText Typo="Typo.body2">@app.FlaggerStatus </MudText>
+
+                <MudText Typo="Typo.body2"> Interval : @canary.interval </MudText>
             </MudCardContent>
             <MudCardActions>
                 <MudButton Variant="Variant.Text" Color="Color.Primary">Generate Canary</MudButton>
@@ -36,6 +38,8 @@ else
 
     private AppDetailModel? app;
 
+    private CanaryModel? canary;
+
     protected override async Task OnInitializedAsync()
     {
         await Refresh();
@@ -45,6 +49,8 @@ else
     async Task Refresh()
     {
         app = await Http.GetFromJsonAsync<AppDetailModel>($"api/app/{Id}");
+        canary = await Http.GetFromJsonAsync<CanaryModel>($"api/canary/{Id}");
+
     }
 
     void Register()

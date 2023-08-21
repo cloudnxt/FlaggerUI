@@ -11,14 +11,14 @@ namespace Gates.Server.Controllers
     {
         private readonly IAppService _appService;
         private readonly IMapper _mapper;
-        private readonly IGateService _gateService;
+        private readonly ICanaryService _canaryService;
         private readonly IEventService _eventService;
 
-        public CanaryController(IAppService appService, IMapper mapper, IGateService gateService, IEventService eventService, ILogger<AppController> logger)
+        public CanaryController(IAppService appService, IMapper mapper, ICanaryService canaryService, IEventService eventService, ILogger<AppController> logger)
         {
             _appService = appService;
             _mapper = mapper;
-            _gateService = gateService;
+            _canaryService = canaryService;
             _eventService = eventService;
         }
 
@@ -26,8 +26,15 @@ namespace Gates.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<AppModel>>> GetAllApps()
         {
-            var apps = await _appService.GetAllApps();
-            return Ok(apps);
+            var canaries = await _canaryService.GetAllCanaries();
+            return Ok(canaries);
+        }
+
+        [HttpGet("{appId}")]
+        public async Task<ActionResult<AppModel>> Get(int appId)
+        {
+            var canary = await _canaryService.GetCanaryByAppId(appId);
+            return Ok(canary);
         }
     }
 }
