@@ -3,12 +3,12 @@ entries:
   flagger-ui:
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2023-08-20T13:29:25.121034215Z"
+    created: "2023-08-21T09:21:21.920232995Z"
     description: A Helm chart for Kubernetes
-    digest: 3b98cf18f99df74b8227f9d582e41875bfeeef18a565fcb50560c4beb0aea88f
+    digest: 23a6c032ec79552e251133ecdff98a42cf92f65d3fba15ce09943672a2e59ba1
     name: flagger-ui
     type: application
     urls:
     - https://cloudnxt.github.io/FlaggerUI/flagger-ui-0.0.1.tgz
     version: 0.0.1
-generated: "2023-08-20T13:29:25.120524108Z"
+generated: "2023-08-21T09:21:21.919300276Z"
