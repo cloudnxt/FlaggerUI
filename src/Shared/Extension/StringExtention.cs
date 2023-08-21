@@ -4,7 +4,9 @@
     {
         public static bool IsFlaggerResource(this string appname)
         {
-            return appname.EndsWith("-primary") && appname.EndsWith("-canary");
+           if(appname.EndsWith("-primary") || appname.EndsWith("-canary"))
+                return true;
+           return false;
         }
     }
 }
