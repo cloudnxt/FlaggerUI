@@ -9,6 +9,7 @@ namespace Gates.Server.Data
         {
         }
         public DbSet<AppModel> Apps { get; set; }
+        public DbSet<CanaryModel> Canaries { get; set; }
         public DbSet<GateModel> Gates { get; set; }
         public DbSet<EventModel> Events { get; set; }
         public DbSet<LoadTestModel> LoadTestRuns { get; set; }

@@ -15,14 +15,16 @@ namespace Gates.Server.Controllers
     public class AdmissionWebhookController : ControllerBase
     {
         private readonly IAppService _appService;
+        private readonly ICanaryService _canaryService;
         private readonly IMapper _mapper;
         private readonly IGateService _gateService;
         private readonly IEventService _eventService;
         private readonly ILogger<AppController> _logger;
         private readonly string requiredAnnotation = "enable-canary-gates";
-        public AdmissionWebhookController(IAppService appService, IMapper mapper, IGateService gateService, IEventService eventService, ILogger<AppController> logger)
+        public AdmissionWebhookController(IAppService appService, ICanaryService canaryService, IMapper mapper, IGateService gateService, IEventService eventService, ILogger<AppController> logger)
         {
             _appService = appService;
+            _canaryService = canaryService;
             _mapper = mapper;
             _gateService = gateService;
             _eventService = eventService;
@@ -33,7 +35,10 @@ namespace Gates.Server.Controllers
         public async Task<KubeAdmissionReviewResponse> Post([FromBody] KubeAdmissionReviewRequest review)
         {
             _logger.LogInformation(JsonSerializer.Serialize(review));
-
+            if (review.Request.dryRun)
+            {
+                return KubeAdmissionReviewExtensions.SendSuccessResponse(review.Request.Uid);
+            }
             if (review.IsDeployment())
             {
                 _logger.LogInformation($"Found Deployment");
@@ -42,7 +47,7 @@ namespace Gates.Server.Controllers
 
             else if (String.Equals(review.GetReviewKind(), "canary", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.LogInformation($"Found Deployment");
+                _logger.LogInformation($"Found Canary");
                 return await HandleCanaryWebhook(review);
             }
             else
@@ -54,6 +59,58 @@ namespace Gates.Server.Controllers
 
         private async Task<KubeAdmissionReviewResponse> HandleCanaryWebhook(KubeAdmissionReviewRequest review)
         {
+            try
+            {
+                var operation = review.GetOperation();
+                var space = review?.Request.Object.Metadata.Namespace;
+                var app = review.Request?.Object?.spec?.targetRef?.name;
+
+                switch (operation)
+                {
+                    case "CREATE":
+                        _logger.LogInformation("Request Operation is CREATE");
+
+                        var appExists = await _appService.GetAppNameAndSpace(app, space);
+                        if (appExists != null)
+                        {
+                            CanaryModel request = new CanaryModel()
+                            {
+                                AppId = appExists.Id,
+                                Name = review.Request.Object.spec?.targetRef?.name,
+                                Namespace = review?.Request?.Object?.Metadata?.Namespace,
+                                interval = review?.Request?.Object?.spec?.analysis?.interval,
+                                threshold = review?.Request?.Object?.spec?.analysis?.threshold,
+                            };
+
+                            await _canaryService.CreateCanary(request);
+
+                        }
+                        break;
+
+                    case "DELETE":
+                        _logger.LogInformation("in DELETE");
+
+                        var existingApp = await _appService.GetAppNameAndSpace(app, space);
+                        if (existingApp != null)
+                        {
+                            await _canaryService.DeleteCanary(existingApp.Id);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            // Add App here
             return KubeAdmissionReviewExtensions.SendSuccessResponse(review.Request.Uid);
         }
         private async Task<KubeAdmissionReviewResponse> HandleDeploymentWebhook(KubeAdmissionReviewRequest review)
@@ -61,12 +118,12 @@ namespace Gates.Server.Controllers
             try
             {
                 var operation = review.GetOperation();
-                
+
                 switch (operation)
                 {
                     case "CREATE":
                         _logger.LogInformation("Request Operation is CREATE");
-                        
+
                         var annotationExists = review.GetAnnotations()?.FirstOrDefault(r => r.Key == requiredAnnotation).Value;
                         if (annotationExists == "true")
                         {

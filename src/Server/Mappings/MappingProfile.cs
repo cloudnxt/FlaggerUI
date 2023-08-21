@@ -32,6 +32,8 @@ namespace Gates.Server.Mappings
             CreateMap<AppModel, EventModel>();
 
             CreateMap<AppModel, AppDetailModel>();
+
+            CreateMap<CanaryModel, EventModel>();
         }
     }
 }

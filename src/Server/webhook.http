@@ -100,3 +100,66 @@ Content-Type: application/json
     }
   }
 }
+
+
+
+### Create an Canary ###
+
+POST http://localhost:5080/api/AdmissionWebhook
+Content-Type: application/json
+
+
+{
+  "ApiVersion": "admission.k8s.io/v1",
+  "Kind": "AdmissionReview",
+  "Request": {
+    "Uid": "282c7151-2d2c-419e-a5a9-15e51dce904f",
+    "Kind": {
+      "Group": "flagger.app",
+      "Version": "v1beta1",
+      "Kind": "Canary"
+    },
+    "Resource": {
+      "Group": "flagger.app",
+      "Version": "v1beta1",
+      "Resource": "canaries"
+    },
+    "Name": "podinfo",
+    "Namespace": "default",
+    "Operation": "CREATE",
+    "Object": {
+      "Metadata": {
+        "Name": "podinfo",
+        "Namespace": "default",
+        "Labels": null,
+        "Annotations": {
+          "kubectl.kubernetes.io/last-applied-configuration": ""
+        }
+      },
+      "spec": {
+        "replicas": 0,
+        "template": null
+      }
+    },
+    "OldObject": null,
+    "requestKind": {
+      "Group": "flagger.app",
+      "Version": "v1beta1",
+      "Kind": "Canary"
+    },
+    "requestResource": {
+      "Group": "flagger.app",
+      "Version": "v1beta1",
+      "Resource": "canaries"
+    },
+    "userInfo": {
+      "username": "docker-for-desktop",
+      "uid": null
+    },
+    "dryRun": false,
+    "options": {
+      "kind": "CreateOptions",
+      "apiVersion": "meta.k8s.io/v1"
+    }
+  }
+}
