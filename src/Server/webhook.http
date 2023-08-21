@@ -108,12 +108,11 @@ Content-Type: application/json
 POST http://localhost:5080/api/AdmissionWebhook
 Content-Type: application/json
 
-
 {
   "ApiVersion": "admission.k8s.io/v1",
   "Kind": "AdmissionReview",
   "Request": {
-    "Uid": "282c7151-2d2c-419e-a5a9-15e51dce904f",
+    "Uid": "dc52a5f2-6886-4cf4-b98d-efa92be09e04",
     "Kind": {
       "Group": "flagger.app",
       "Version": "v1beta1",
@@ -127,21 +126,65 @@ Content-Type: application/json
     "Name": "podinfo",
     "Namespace": "default",
     "Operation": "CREATE",
+    "OldObject": null,
     "Object": {
       "Metadata": {
         "Name": "podinfo",
         "Namespace": "default",
         "Labels": null,
         "Annotations": {
-          "kubectl.kubernetes.io/last-applied-configuration": ""
+
         }
       },
       "spec": {
         "replicas": 0,
-        "template": null
+        "template": null,
+        "targetRef": {
+          "kind": "Deployment",
+          "apiVersion": "apps/v1",
+          "name": "podinfo"
+        },
+        "analysis": {
+          "interval": "30s",
+          "threshold": 5,
+          "iterations": 5,
+          "maxWeight": null,
+          "stepWeight": null,
+          "webhooks": [
+            {
+              "name": "start gate",
+              "type": "confirm-rollout",
+              "url": "http://flagger-ui.default.svc/api/Gate/check"
+            },
+            {
+              "name": "confirm-traffic-increase",
+              "type": "confirm-traffic-increase",
+              "url": "http://flagger-ui.default.svc/api/Gate/check"
+            },
+            {
+              "name": "load test",
+              "type": "rollout",
+              "url": "http://flagger-ui.default.svc/api/Loadtest"
+            },
+            {
+              "name": "promotion gate",
+              "type": "confirm-promotion",
+              "url": "http://flagger-ui.default.svc/api/Gate/check"
+            },
+            {
+              "name": "Send to Events",
+              "type": "event",
+              "url": "http://flagger-ui.default.svc/api/Event"
+            },
+            {
+              "name": "rollback gate",
+              "type": "rollback",
+              "url": "http://flagger-ui.default.svc/api/Gate/Check"
+            }
+          ]
+        }
       }
     },
-    "OldObject": null,
     "requestKind": {
       "Group": "flagger.app",
       "Version": "v1beta1",
