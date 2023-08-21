@@ -6,4 +6,4 @@ image:
 
 nameOverride: "flagger-ui"
 fullnameOverride: "flagger-ui"
-metricServer: http://flagger-prometheus:9090/
+metricServer: http://flagger-prometheus.flagger-system:9090/

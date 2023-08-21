@@ -15,17 +15,19 @@ namespace Gates.Shared.Responses
 
     public class Metric
     {
-        public string __name__ { get; set; }
-        public string app_kubernetes_io_instance { get; set; }
-        public string app_kubernetes_io_name { get; set; }
-        public string app_kubernetes_io_version { get; set; }
-        public string instance { get; set; }
-        public string job { get; set; }
-        public string kubernetes_namespace { get; set; }
-        public string kubernetes_pod_name { get; set; }
-        public string name { get; set; }
-        public string @namespace { get; set; }
-        public string pod_template_hash { get; set; }
+        public string? __name__ { get; set; }
+        public string? app_kubernetes_io_instance { get; set; }
+        public string? app_kubernetes_io_name { get; set; }
+        public string? app_kubernetes_io_version { get; set; }
+        public string? instance { get; set; }
+        public string? job { get; set; }
+        public string? kubernetes_namespace { get; set; }
+        public string? kubernetes_pod_name { get; set; }
+        public string? name { get; set; }
+        public string? @namespace { get; set; }
+        public string? pod_template_hash { get; set; }
+        public string? status { get; set; }
+        
     }
 
     public class Result

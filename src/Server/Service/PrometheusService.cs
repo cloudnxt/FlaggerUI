@@ -1,4 +1,5 @@
-﻿using Gates.Shared.Responses;
+﻿using Gates.Client;
+using Gates.Shared.Responses;
 using Gates.Shared.ServiceModels;
 using Microsoft.Extensions.Logging;
 using static System.Net.WebRequestMethods;
@@ -38,9 +39,17 @@ namespace Gates.Server.Service
             return null;
         }
 
-        public Task<MetricResponse> GetIsAppLive(MetricRequest request)
+        public async Task<MetricResponse> GetIsAppLive(MetricRequest request)
         {
-            throw new NotImplementedException();
+            var result = await _httpClient.GetAsync("api/v1/query?query=http_request_duration_seconds_bucket{app=\"" + request.appname + "\",kubernetes_namespace=\"" + request.Namespace + "\"}");
+            var res = await result.Content.ReadFromJsonAsync<MetricResponse>();
+
+            if (result.IsSuccessStatusCode)
+            {
+                return res;
+            }
+
+            return null;
         }
     }
 }
