@@ -60,8 +60,8 @@ namespace Gates.Server.Service
         {
             var model = _mapper.Map<EventModel>(request);
             model.Id = 0;
-            model.Phase = "Apply Canary Resource";
-            model.EventMessage = "Registered";
+            model.Phase = "Registered";
+            model.EventMessage = "Apply Canary Resource";
             _eventService.CreateEvent(model);
         }
 
@@ -69,8 +69,8 @@ namespace Gates.Server.Service
         {
             var model = _mapper.Map<EventModel>(request);
             model.Id = 0;
-            model.Phase = "Remove Canary";
-            model.EventMessage = "De-Registered";
+            model.Phase = "De-Registered";
+            model.EventMessage = "Remove Canary";
             _eventService.CreateEvent(model);
         }
     }
