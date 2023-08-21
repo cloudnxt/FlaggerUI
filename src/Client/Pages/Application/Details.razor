@@ -7,7 +7,7 @@
 
 <PageTitle>Apps</PageTitle>
 <div>
-        <h3>Apps</h3>
+    <h3>Apps</h3>
 </div>
 @if (app == null || canary == null)
 {
@@ -18,26 +18,53 @@ else
     <MudPaper>
         <MudCard>
             <MudCardContent>
-                <MudText Typo="Typo.h5">@app.Name</MudText>
-                <MudText Typo="Typo.body2">@app.Namespace</MudText>
-                <MudText Typo="Typo.body2">@app.ContainerPorts </MudText>
-                <MudText Typo="Typo.body2">@app.FlaggerStatus </MudText>
+                <MudText Typo="Typo.h5"> Deployment Details </MudText>
 
-                <MudText Typo="Typo.body2"> Interval : @canary?.interval </MudText>
-                <MudText Typo="Typo.body2"> Threshold : @canary?.threshold </MudText>
-                <MudText Typo="Typo.body2"> StepWeight : @canary?.stepWeight </MudText>
-                <MudText Typo="Typo.body2"> MaxWeight : @canary?.maxWeight </MudText>
+                <MudGrid>
+                    <MudItem xs="6" Style="padding-left:5px;">
+                        <MudText><b> Name: </b>@app.Name</MudText>
+                        <MudText><b> Namespace: </b>@app.Namespace</MudText>
+                        <MudText><b> ContainerPorts: </b>@app.ContainerPorts</MudText>
+                        <MudText><b> FlaggerStatus: </b>@app.FlaggerStatus </MudText>
+                    </MudItem>
+                </MudGrid>
 
-                @foreach (var item in hooks)
+
+
+
+                @if (canary.interval == null)
                 {
-                    <MudText Typo="Typo.body2"> URL : @item.url </MudText>
-                    <MudText Typo="Typo.body2"> Type : @item.type </MudText>
-                    <MudText Typo="Typo.body2"> Name : @item.name </MudText>
+                    <MudText Typo="Typo.h5" Color="Color.Error"> Canary has not been applied </MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5"> Canary Details </MudText>
+                    <MudGrid>
+                        <MudItem xs="12" Style="padding-left:5px;">
+                            <MudText><b> Name: </b>@canary?.interval</MudText>
+                            <MudText><b> Iterations: </b>@canary.iterations</MudText>
+                            <MudText><b> Threshold: </b>@canary.threshold</MudText>
+                            <MudText><b> StepWeight: </b>@canary.stepWeight</MudText>
+                            <MudText><b> MaxWeight: </b>@canary.maxWeight</MudText>
+                        </MudItem>
+
+                    </MudGrid>
+
+                    <MudText Typo="Typo.h5"> Canary Webhooks </MudText>
+                    <MudGrid>
+
+                        @foreach (var item in hooks)
+                        {
+                            <MudItem xs="12" Style="padding-left:5px;">
+                                <MudText ><b> Type:  @item.type </b></MudText>
+                                <MudText ><b> Name: </b>@item.name</MudText>
+                                <MudText ><b> URL: </b>@item.url</MudText>
+                            </MudItem>
+                        }
+                    </MudGrid>
                 }
             </MudCardContent>
-            <MudCardActions>
-                <MudButton Variant="Variant.Filled"  Color="Color.Primary">Generate Canary File</MudButton>
-            </MudCardActions>
         </MudCard>
     </MudPaper>
 }
