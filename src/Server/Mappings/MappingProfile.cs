@@ -28,7 +28,10 @@ namespace Gates.Server.Mappings
                 .ForMember(pts => pts.NoOfRequests, opt => opt.MapFrom(ps => ps.Metadata.NoOfRequests));
 
 
+
             CreateMap<AppModel, EventModel>();
+
+            CreateMap<AppModel, AppDetailModel>();
         }
     }
 }

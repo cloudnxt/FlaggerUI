@@ -1,4 +1,5 @@
-﻿using Gates.Shared.ServiceModels;
+﻿using Gates.Shared.Responses;
+using Gates.Shared.ServiceModels;
 using Microsoft.Extensions.Logging;
 using static System.Net.WebRequestMethods;
 
@@ -24,20 +25,20 @@ namespace Gates.Server.Service
 
 
 
-        public async Task<string> GetFlaggerStatusForApp(MetricRequest request)
+        public async Task<MetricResponse> GetFlaggerStatusForApp(MetricRequest request)
         {
-            var result = await _httpClient.GetAsync("api/v1/query");
-            _logger.LogInformation(await result.Content.ReadAsStringAsync());
+            var result = await _httpClient.GetAsync("api/v1/query?query=flagger_canary_status{name=\"" + request.appname + "\",namespace=\"" + request.Namespace + "\"}");
+            var res = await result.Content.ReadFromJsonAsync<MetricResponse>();
 
             if (result.IsSuccessStatusCode)
             {
-                return "Hello";
+                return res;
             }
 
-            return "Error";
+            return null;
         }
 
-        public Task<string> GetIsAppLive(MetricRequest request)
+        public Task<MetricResponse> GetIsAppLive(MetricRequest request)
         {
             throw new NotImplementedException();
         }

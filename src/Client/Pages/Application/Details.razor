@@ -20,6 +20,7 @@ else
                 <MudText Typo="Typo.h5">@app.Name</MudText>
                 <MudText Typo="Typo.body2">@app.Namespace</MudText>
                 <MudText Typo="Typo.body2">@app.ContainerPorts </MudText>
+                <MudText Typo="Typo.body2">@app.FlaggerStatus </MudText>
             </MudCardContent>
             <MudCardActions>
                 <MudButton Variant="Variant.Text" Color="Color.Primary">Generate Canary</MudButton>
@@ -33,7 +34,7 @@ else
     [Parameter]
     public int Id { get; set; }
 
-    private AppModel? app;
+    private AppDetailModel? app;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,7 +44,7 @@ else
 
     async Task Refresh()
     {
-        app = await Http.GetFromJsonAsync<AppModel>($"api/app/{Id}");
+        app = await Http.GetFromJsonAsync<AppDetailModel>($"api/app/{Id}");
     }
 
     void Register()

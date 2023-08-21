@@ -37,12 +37,14 @@ namespace Gates.Server.Controllers
         [HttpGet("{appId}")]
         public async Task<ActionResult<AppDetailModel>> GetAppById(int appId)
         {
-            AppDetailModel app = (AppDetailModel) await _appService.GetAppById(appId);
-
-            app.FlaggerStatus = _metricService.GetFlaggerStatusForApp(new MetricRequest());
+            AppDetailModel app = _mapper.Map<AppDetailModel>(await _appService.GetAppById(appId));
 
             if (app == null)
                 return NotFound();
+
+            var metric = await _metricService.GetFlaggerStatusForApp(new MetricRequest() { appname = app.Name, Namespace = app.Namespace });
+
+            app.FlaggerStatus = String.Join(",", metric.data.result[0].value);
 
             return Ok(app);
         }
