@@ -15,15 +15,15 @@
 <PageTitle>Index</PageTitle>
 <MudPaper>
     <MudGrid>
-        <MudItem xs="6">
+        <MudItem xs="8">
             <MudPaper>
-                <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Indx" XAxisLabels="@XAxisLabels" Width="100%" Height="300px" ChartOptions="chartOptions">
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Indx" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="chartOptions">
                 </MudChart>
             </MudPaper>
         </MudItem>
-        <MudItem xs="6">
+        <MudItem xs="4">
             <MudPaper Class="pa-4">
-                <MudChart ChartType="ChartType.Donut" @bind-SelectedIndex="Indx" InputData="@data" InputLabels="@XAxisLabels"></MudChart>
+                <MudChart ChartType="ChartType.Donut" @bind-SelectedIndex="Indx" Height="350px" InputData="@data" InputLabels="@XAxisLabels"></MudChart>
             </MudPaper>
         </MudItem>
     </MudGrid>
