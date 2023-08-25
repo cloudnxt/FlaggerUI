@@ -74,8 +74,8 @@ namespace Gates.Server.Service
         {
             var model = _mapper.Map<EventModel>(request);
             model.Id = 0;
-            model.Phase = "New App";
-            model.EventMessage = "Registered";
+            model.Phase = "Registered";
+            model.EventMessage = "New App Registered";
             _eventService.CreateEvent(model);
         }
 
@@ -83,8 +83,8 @@ namespace Gates.Server.Service
         {
             var model = _mapper.Map<EventModel>(request);
             model.Id = 0;
-            model.Phase = "Remove App";
-            model.EventMessage = "De-Registered";
+            model.Phase = "De-Registered";
+            model.EventMessage = $"App Removed";
             _eventService.CreateEvent(model);
         }
 

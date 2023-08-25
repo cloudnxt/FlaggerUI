@@ -38,7 +38,7 @@ namespace Gates.Server.Controllers
             {
                 return Ok(canary);
             }
-            return Ok(new CanaryModel());
+            return NotFound();
         }
     }
 }

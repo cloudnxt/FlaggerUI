@@ -42,9 +42,9 @@ namespace Gates.Server.Controllers
             if (app == null)
                 return NotFound();
 
-            var metric = await _metricService.GetFlaggerStatusForApp(new MetricRequest() { appname = app.Name, Namespace = app.Namespace });
+            //var metric = await _metricService.GetFlaggerStatusForApp(new MetricRequest() { appname = app.Name, Namespace = app.Namespace });
 
-            app.FlaggerStatus = String.Join(",", metric.data.result[0].value);
+            //app.FlaggerStatus = String.Join(",", metric.data.result[0].value);
 
             return Ok(app);
         }

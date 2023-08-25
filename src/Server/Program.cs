@@ -1,3 +1,6 @@
+using EasyException.Abstractions;
+using EasyException.Middleware;
+using Gates.Server;
 using Gates.Server.Data;
 using Gates.Server.Service;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +23,7 @@ namespace Gates
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddSingleton<IErrorHandlingService, ErrorHandlingService>();
             builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseInMemoryDatabase(databaseName: "GatesApp"));
             builder.Services.AddHttpClient();
@@ -54,7 +58,7 @@ namespace Gates
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseEasyExceptionHandling();
             //app.UseHttpsRedirection();
 
             app.UseBlazorFrameworkFiles();
