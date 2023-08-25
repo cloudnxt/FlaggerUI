@@ -37,7 +37,7 @@ else
         {
             <MudCard>
                 <MudText Typo="Typo.caption" Color="Color.Error"> Canary has not been applied </MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
+                <MudButton @onclick="DownloadFile" Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
             </MudCard>
         }
         else
@@ -79,6 +79,9 @@ else
 
 }
 @code {
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
     [Parameter]
     public int Id { get; set; }
 
@@ -112,7 +115,7 @@ else
         {
             var canaryresponse = await Http.GetAsync($"api/canary/{Id}");
             canaryresponse.EnsureSuccessStatusCode();
-            var canary = JsonSerializer.Deserialize<CanaryModel>(await canaryresponse.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            canary = JsonSerializer.Deserialize<CanaryModel>(await canaryresponse.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (canary != null && canary.Webhooks != null)
             {
                 hooks = JsonSerializer.Deserialize<List<Webhook>>(canary?.Webhooks);
@@ -128,6 +131,24 @@ else
     {
         _navigationManager.NavigateTo("/register/app");
     }
+
+    private async Task DownloadFile()
+    {
+        var response = await Http.GetAsync($"api/canary/downloadcanary/{app.Id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsByteArrayAsync();
+            var base64 = Convert.ToBase64String(content);
+            var js = $"var link = document.createElement('a'); " +
+                     $"link.href = 'data:application/octet-stream;base64,{base64}'; " +
+                     $"link.download = 'api/canary/downloadcanary/{app.Id}'; " +
+                     $"link.click();";
+
+            await JSRuntime.InvokeVoidAsync("eval", js);
+        }
+    }
+
     public class Webhook
     {
         public string? name { get; set; }
