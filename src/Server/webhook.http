@@ -18,7 +18,7 @@ Content-Type: application/json
       "version": "v1",
       "resource": "deployments"
     },
-    "name": "podinfo-primary",
+    "name": "podinfo",
     "namespace": "uploader",
     "operation": "CREATE",
     "userInfo": {
@@ -32,7 +32,7 @@ Content-Type: application/json
       "kind": "Deployment",
       "apiVersion": "apps/v1",
       "metadata": {
-        "name": "podinfo-primary",
+        "name": "podinfo",
         "namespace": "uploader",
         "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
         "generation": 1,
