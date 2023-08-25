@@ -9,7 +9,7 @@
 <div>
     <h3>Apps</h3>
 </div>
-@if (app == null || canary == null)
+@if (app == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -17,29 +17,39 @@ else
 {
     <MudPaper>
         <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Deployment Details</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
             <MudCardContent>
-                <MudText Typo="Typo.h5"> Deployment Details </MudText>
-
                 <MudGrid>
                     <MudItem xs="6" Style="padding-left:5px;">
                         <MudText><b> Name: </b>@app.Name</MudText>
                         <MudText><b> Namespace: </b>@app.Namespace</MudText>
                         <MudText><b> ContainerPorts: </b>@app.ContainerPorts</MudText>
-                        <MudText><b> FlaggerStatus: </b>@app.FlaggerStatus </MudText>
+                        <MudText><b> Deployment Created: </b>@app.Created </MudText>
+                        @*<MudText><b> FlaggerStatus: </b>@app.FlaggerStatus </MudText>*@
                     </MudItem>
                 </MudGrid>
-
-
-
-
-                @if (canary.interval == null)
-                {
-                    <MudText Typo="Typo.h5" Color="Color.Error"> Canary has not been applied </MudText>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
-                }
-                else
-                {
-                    <MudText Typo="Typo.h5"> Canary Details </MudText>
+            </MudCardContent>
+        </MudCard>
+        @if (canary == null)
+        {
+            <MudCard>
+                <MudText Typo="Typo.caption" Color="Color.Error"> Canary has not been applied </MudText>
+                <MudButton @onclick="DownloadFile" Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
+            </MudCard>
+        }
+        else
+        {
+            <MudCard Class="pt-5">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Canary Details</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
                     <MudGrid>
                         <MudItem xs="12" Style="padding-left:5px;">
                             <MudText><b> Name: </b>@canary?.interval</MudText>
@@ -51,25 +61,28 @@ else
 
                     </MudGrid>
 
-                    <MudText Typo="Typo.h5"> Canary Webhooks </MudText>
+                    <MudText Typo="Typo.h6" Class="pt-5"> Canary Webhooks </MudText>
                     <MudGrid>
 
                         @foreach (var item in hooks)
                         {
                             <MudItem xs="12" Style="padding-left:5px;">
-                                <MudText ><b> Type:  @item.type </b></MudText>
-                                <MudText ><b> Name: </b>@item.name</MudText>
-                                <MudText ><b> URL: </b>@item.url</MudText>
+                                <MudText><b> Type:  @item.type </b></MudText>
+                                <MudText><b> Name: </b>@item.name</MudText>
+                                <MudText><b> URL: </b>@item.url</MudText>
                             </MudItem>
                         }
                     </MudGrid>
-                }
-            </MudCardContent>
-        </MudCard>
+                </MudCardContent>
+            </MudCard>
+        }
     </MudPaper>
-}
 
+}
 @code {
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
     [Parameter]
     public int Id { get; set; }
 
@@ -87,19 +100,56 @@ else
 
     async Task Refresh()
     {
-        app = await Http.GetFromJsonAsync<AppDetailModel>($"api/app/{Id}");
-        canary = await Http.GetFromJsonAsync<CanaryModel>($"api/canary/{Id}");
-        if (canary.Webhooks != null)
+        try
         {
-            hooks = JsonSerializer.Deserialize<List<Webhook>>(canary?.Webhooks);
+            var response = await Http.GetAsync($"api/app/{Id}");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            app = JsonSerializer.Deserialize<AppDetailModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("No App");
         }
 
+        try
+        {
+            var canaryresponse = await Http.GetAsync($"api/canary/{Id}");
+            canaryresponse.EnsureSuccessStatusCode();
+            canary = JsonSerializer.Deserialize<CanaryModel>(await canaryresponse.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (canary != null && canary.Webhooks != null)
+            {
+                hooks = JsonSerializer.Deserialize<List<Webhook>>(canary?.Webhooks);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("No Canary");
+        }
     }
 
     void Register()
     {
         _navigationManager.NavigateTo("/register/app");
     }
+
+    private async Task DownloadFile()
+    {
+        var response = await Http.GetAsync($"api/canary/downloadcanary/{app.Id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsByteArrayAsync();
+            var base64 = Convert.ToBase64String(content);
+            var js = $"var link = document.createElement('a'); " +
+                     $"link.href = 'data:application/octet-stream;base64,{base64}'; " +
+                     $"link.download = 'api/canary/downloadcanary/{app.Id}'; " +
+                     $"link.click();";
+
+            await JSRuntime.InvokeVoidAsync("eval", js);
+        }
+    }
+
     public class Webhook
     {
         public string? name { get; set; }

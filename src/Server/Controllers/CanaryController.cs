@@ -2,6 +2,7 @@
 using Gates.Server.Service;
 using Gates.Shared.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace Gates.Server.Controllers
 {
@@ -34,11 +35,37 @@ namespace Gates.Server.Controllers
         public async Task<ActionResult<AppModel>> Get(int appId)
         {
             var canary = await _canaryService.GetCanaryByAppId(appId);
-            if(canary != null)
+            if (canary != null)
             {
                 return Ok(canary);
             }
-            return Ok(new CanaryModel());
+            return NotFound();
+        }
+
+        [HttpGet("downloadcanary/{appId}")]
+        public IActionResult DownloadFile(int appId)
+        {
+            string filePath = @"canary.yaml";
+            try
+            {
+                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+                Console.WriteLine("File read and converted to bytes successfully.");
+
+                // You can now use the 'fileBytes' array as needed.
+                var contentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = "canary.yaml"
+                };
+                Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+
+                return File(fileBytes, "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return NotFound(filePath);
         }
     }
 }
