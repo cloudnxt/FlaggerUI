@@ -24,13 +24,22 @@ else
             </MudCardHeader>
             <MudCardContent>
                 <MudGrid>
-                    <MudItem xs="6" Style="padding-left:5px;">
+                    <MudItem xs="12" Style="padding-left:5px;">
                         <MudText><b> Name: </b>@app.Name</MudText>
                         <MudText><b> Namespace: </b>@app.Namespace</MudText>
+                        <MudText><b> Current Image: </b>@app.Image</MudText>
                         <MudText><b> ContainerPorts: </b>@app.ContainerPorts</MudText>
                         <MudText><b> Deployment Created: </b>@app.Created </MudText>
                         @*<MudText><b> FlaggerStatus: </b>@app.FlaggerStatus </MudText>*@
                     </MudItem>
+                    <MudText Typo="Typo.h6" Class="pt-5"> Image History </MudText>
+                    @foreach (var item in imagesUsed)
+                    {
+                        <MudItem xs="12" Style="padding-left:5px;">
+                            <MudText><b> Image:</b>  @item.Image </MudText>
+                            <MudText><b> Used: </b>@item.Applied</MudText>
+                        </MudItem>
+                    }
                 </MudGrid>
             </MudCardContent>
         </MudCard>
@@ -38,6 +47,7 @@ else
         {
             <MudCard>
                 <MudText Typo="Typo.caption" Color="Color.Error"> Canary has not been applied </MudText>
+                <br />
                 <MudButton @onclick="DownloadFile" Variant="Variant.Filled" Color="Color.Primary">Generate Canary File</MudButton>
             </MudCard>
         }
@@ -88,6 +98,8 @@ else
 
     private AppDetailModel? app;
 
+    private List<ImageDetails>? imagesUsed;
+
     private CanaryModel? canary;
 
     List<Webhook> hooks = new List<Webhook>();
@@ -106,9 +118,19 @@ else
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             app = JsonSerializer.Deserialize<AppDetailModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (!String.IsNullOrWhiteSpace(app.OldImages))
+            {
+                imagesUsed = JsonSerializer.Deserialize<List<ImageDetails>>(app.OldImages, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            else
+            {
+
+                imagesUsed = new List<ImageDetails>();
+            }
         }
         catch (Exception ex)
         {
+
             Console.WriteLine("No App");
         }
 

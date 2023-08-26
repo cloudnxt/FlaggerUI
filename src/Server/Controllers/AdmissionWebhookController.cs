@@ -97,6 +97,16 @@ namespace Gates.Server.Controllers
                             await _canaryService.DeleteCanary(existingApp.Id);
                         }
                         break;
+
+                    case "UPDATE":
+                        _logger.LogInformation("in UPDATE");
+
+                        var existingAppToUpdate = await _appService.GetAppNameAndSpace(app, space);
+                        // if (existingAppToUpdate != null)
+                        // {
+                        //     await _canaryService.DeleteCanary(existingAppToUpdate.Id);
+                        // }
+                        break;
                     default:
                         break;
                 }
@@ -160,6 +170,43 @@ namespace Gates.Server.Controllers
                                     await _appService.DeleteApp(exists.Id);
                                 }
                             }
+                        }
+                        break;
+                    case "UPDATE":
+                        _logger.LogInformation("in UPDATE");
+                        var annotation = "false";
+                        var _ = review?.Request?.OldObject?.Metadata?.Annotations?.TryGetValue(requiredAnnotation, out var oldy);
+                        var new1 = review?.Request?.Object?.Metadata?.Annotations?.TryGetValue(requiredAnnotation, out annotation);
+                        if (annotation == "true")
+                        {
+                            var space = review?.Request?.OldObject?.Metadata?.Namespace;
+                            var app = review?.Request?.OldObject?.Metadata?.Name;
+                            if (!app.IsFlaggerResource())
+                            {
+                                var appExists = await _appService.GetAppNameAndSpace(app, space);
+                                if (appExists != null)
+                                {
+                                    AddAppApiRequest request = PrepareAddAppRequest(review);
+                                    var appModel = _mapper.Map<AppModel>(request);
+                                    await _appService.UpdateApp(appModel);
+
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                            var space = review?.Request?.Object?.Metadata?.Namespace;
+                            var app = review?.Request?.Object?.Metadata?.Name;
+                            if (!app.IsFlaggerResource())
+                            {
+                                var exists = await _appService.GetAppNameAndSpace(app, space);
+                                if (exists != null)
+                                {
+                                    await _appService.DeleteApp(exists.Id);
+                                }
+                            }
+
                         }
                         break;
                     default:
