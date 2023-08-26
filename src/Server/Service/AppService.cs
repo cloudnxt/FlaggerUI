@@ -6,6 +6,8 @@ using Gates.Shared.Enums;
 using Gates.Shared.Requests;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Channels;
 
 namespace Gates.Server.Service
 {
@@ -16,7 +18,7 @@ namespace Gates.Server.Service
         private readonly IGateService _gateService;
         private readonly IEventService _eventService;
 
-        public AppService(AppDbContext dbContext,IMapper mapper, IGateService gateService, IEventService eventService)
+        public AppService(AppDbContext dbContext, IMapper mapper, IGateService gateService, IEventService eventService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -45,9 +47,39 @@ namespace Gates.Server.Service
             return app.Id;
         }
 
-        public async Task<bool> UpdateApp(AppModel app)
+        public async Task<bool> UpdateApp(AppModel newApp)
         {
-            _dbContext.Entry(app).State = EntityState.Modified;
+            var existingApp = await GetAppNameAndSpace(newApp.Name, newApp.Namespace);
+            if (existingApp == null)
+                return false;
+            // Update only if Image is not same.
+            if (existingApp.Image != newApp.Image)
+            {
+                if (String.IsNullOrWhiteSpace(existingApp.OldImages))
+                {
+                    var changed = new ImageDetails() { Image = existingApp.Image, Applied = existingApp.Updated };
+                    var changes = new List<ImageDetails>();
+                    changes.Add(changed);
+                    newApp.OldImages = JsonSerializer.Serialize(changes);
+                }
+                else
+                {
+                    var imagesUsed = JsonSerializer.Deserialize<List<ImageDetails>>(existingApp.OldImages);
+                    imagesUsed.Add(new ImageDetails() { Image = existingApp.Image, Applied = existingApp.Updated });
+                    newApp.OldImages = JsonSerializer.Serialize(imagesUsed);
+
+                }
+            }
+            else
+            {
+                newApp.OldImages = existingApp.OldImages;
+            }
+            existingApp.Image = newApp.Image;
+            existingApp.ContainerPorts = newApp.ContainerPorts;
+            existingApp.Replicas = newApp.Replicas;
+            existingApp.OldImages = newApp.OldImages;
+            existingApp.Updated = DateTime.Now;
+            _dbContext.Update(existingApp);
             return await _dbContext.SaveChangesAsync() > 0;
         }
 
@@ -66,7 +98,7 @@ namespace Gates.Server.Service
 
         public async Task<AppModel> GetAppNameAndSpace(string app, string space)
         {
-            return await _dbContext.Apps.Where(a=>a.Name == app && a.Namespace == space).FirstOrDefaultAsync();
+            return await _dbContext.Apps.Where(a => a.Name == app && a.Namespace == space).FirstOrDefaultAsync();
         }
 
 
