@@ -78,12 +78,19 @@ Flagger UI can currently be installed using helm charts. This can be done either
 
 
 ```sh
-helm repo add flagger-ui  https://cloudnxt.github.io/FlaggerUI/
 
-helm repo update
+#direct Install
 
 helm install flagger-ui https://cloudnxt.github.io/FlaggerUI/flagger-ui-0.0.1.tgz
 
+# Add Flagger UI Repo
+helm repo add flagger-ui  https://cloudnxt.github.io/FlaggerUI/
+
+#update Repo
+helm repo update
+
+
+# uninstall flagger-ui
 helm uninstall flagger-ui
 ```
 
