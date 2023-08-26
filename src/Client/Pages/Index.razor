@@ -13,22 +13,30 @@
 </style>
 
 <PageTitle>Index</PageTitle>
-<MudPaper>
+
+<MudPaper Class="pa-5">
+    <h3>Counts</h3>
+
+    Bar Graph to show count for each state of Rollout, Traffic, Promotion..
     <MudGrid>
-        <MudItem xs="8">
-            <MudPaper>
+        <MudItem xs="12">
+            <MudPaper Class="pa-4">
                 <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Indx" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="chartOptions">
                 </MudChart>
             </MudPaper>
         </MudItem>
-        <MudItem xs="4">
-            <MudPaper Class="pa-4">
-                <MudChart ChartType="ChartType.Donut" @bind-SelectedIndex="Indx" Height="350px" InputData="@data" InputLabels="@XAxisLabels"></MudChart>
-            </MudPaper>
-        </MudItem>
+        
     </MudGrid>
+    <h3>All Gates</h3>
 
-
+    Each state being a  different color
+    <MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudChart ChartType="ChartType.Donut" @bind-SelectedIndex="Indx" Height="350px" InputData="@data" InputLabels="@XAxisLabels"></MudChart>
+        </MudPaper>
+    </MudItem>
+      </MudGrid>
 </MudPaper>
 
 @code {

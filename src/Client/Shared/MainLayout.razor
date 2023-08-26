@@ -1,19 +1,46 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider />
+
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Surface" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        @*<MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />*@
+        <MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Light/Dark" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@open" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Flagger UI</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All" Href="/"><MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" />Home</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="applications"><MudIconButton Icon="@Icons.Material.Filled.Apps" Color="Color.Inherit" />Apps</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="events"><MudIconButton Icon="@Icons.Material.Filled.EventNote" Color="Color.Inherit" />Events</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="confirmrollout"><MudIconButton Icon="@Icons.Material.Filled.Output" Color="Color.Inherit" />Confirm Rollout</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="confirmtraffic"><MudIconButton Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Inherit" />Confirm Traffic</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="confirmpromotion"><MudIconButton Icon="@Icons.Material.Filled.SwipeUpAlt" Color="Color.Inherit" />Confirm Promotion</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="rollback"><MudIconButton Icon="@Icons.Material.Filled.SettingsBackupRestore" Color="Color.Inherit" />Rollback</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="loadtest"><MudIconButton Icon="@Icons.Material.Filled.FileUpload" Color="Color.Inherit" />Load Tests</MudNavLink>
+            @*<NavMenu />*@
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private MudTheme _theme = new();
+    private bool _isDarkMode;
+    bool open = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}

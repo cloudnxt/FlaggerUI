@@ -184,12 +184,15 @@ namespace Gates.Server.Controllers
                             if (!app.IsFlaggerResource())
                             {
                                 var appExists = await _appService.GetAppNameAndSpace(app, space);
+
+                                AddAppApiRequest request = PrepareAddAppRequest(review);
+                                var appModel = _mapper.Map<AppModel>(request);
                                 if (appExists != null)
                                 {
-                                    AddAppApiRequest request = PrepareAddAppRequest(review);
-                                    var appModel = _mapper.Map<AppModel>(request);
                                     await _appService.UpdateApp(appModel);
-
+                                }
+                                else {
+                                    await _appService.CreateApp(appModel);
                                 }
                             }
                         }
