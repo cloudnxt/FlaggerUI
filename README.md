@@ -3,9 +3,8 @@
 </p>
 
 
-![image](https://github.com/cloudnxt/FlaggerUI/blob/main/docs/images/ui_full.gif)
+![uihd](https://github.com/cloudnxt/FlaggerUI/assets/22702292/e1883e24-bf18-4ca0-830f-60515b6d2de5)
 
-![Index-Personal-Microsoft-Edge-20](https://github.com/cloudnxt/FlaggerUI/assets/22702292/2a994220-3969-4b86-b6ef-f9fdd10a3802)
 
 
 <h1>Flagger UI</h1>
