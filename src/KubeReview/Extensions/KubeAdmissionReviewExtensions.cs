@@ -45,6 +45,11 @@ namespace KubeReview.Extensions
             return review?.Request?.Object?.spec?.template?.spec?.containers;
         }
 
+        public static List<Container>? GetOldContainers(this KubeAdmissionReviewRequest review)
+        {
+            return review?.Request?.OldObject?.spec?.template?.spec?.containers;
+        }
+
         public static KubeAdmissionReviewResponse SendSuccessResponse(string uid)
         {
             // Create the AdmissionResponse object

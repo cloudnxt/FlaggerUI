@@ -18,33 +18,34 @@ else
         </div>
     </div>
 
+    <MudPaper Width="500" Elevation="10">
+        <MudTable Items="@tests" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" HorizontalScrollbar="true">
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Namespace</MudTh>
+                <MudTh>Phase</MudTh>
+                <MudTh>Webhook State</MudTh>
+                <MudTh>Completed</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.Name</MudTd>
+                <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
+                <MudTd DataLabel="Phase">@context.Phase</MudTd>
+                <MudTd DataLabel="WebhookState">@context.WebhookState</MudTd>
+                <MudTd DataLabel="EventMessage">
+                    @if (@context.Completed)
+                    {
+                        <MudChip Color="Color.Success" @onclick="@(e => GoToLogs(@context.Id))"> Completed </MudChip>
+                    }
+                    else
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                    }
+                </MudTd>
 
-    <MudTable Items="@tests" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" HorizontalScrollbar="true">
-        <HeaderContent>
-            <MudTh>Name</MudTh>
-            <MudTh>Namespace</MudTh>
-            <MudTh>Phase</MudTh>
-            <MudTh>Webhook State</MudTh>
-            <MudTh>Completed</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
-            <MudTd DataLabel="Phase">@context.Phase</MudTd>
-            <MudTd DataLabel="WebhookState">@context.WebhookState</MudTd>
-            <MudTd DataLabel="EventMessage">
-                @if (@context.Completed)
-                {
-                    <MudChip Color="Color.Success" @onclick="@(e => GoToLogs(@context.Id))"> Completed </MudChip>
-                }
-                else
-                {
-                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-                }
-            </MudTd>
-
-        </RowTemplate>
-    </MudTable>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
 
 }
 

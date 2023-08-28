@@ -185,11 +185,16 @@ namespace Gates.Server.Controllers
                             {
                                 var appExists = await _appService.GetAppNameAndSpace(app, space);
 
-                                AddAppApiRequest request = PrepareAddAppRequest(review);
+                                AddAppApiRequest request = PrepareAddAppRequest(review, true);
                                 var appModel = _mapper.Map<AppModel>(request);
                                 if (appExists != null)
                                 {
-                                    await _appService.UpdateApp(appModel);
+                                    appExists.Updated = DateTime.Now;
+                                    appExists.ContainerPorts = appModel.ContainerPorts;
+                                    appExists.OldImages = appModel.OldImages;
+                                    appExists.Replicas = appModel.Replicas;
+                                    appExists.Image = appModel.Image;
+                                    await _appService.UpdateApp(appExists);
                                 }
                                 else {
                                     await _appService.CreateApp(appModel);
@@ -230,11 +235,18 @@ namespace Gates.Server.Controllers
             return KubeAdmissionReviewExtensions.SendSuccessResponse(review.Request.Uid);
         }
 
-        private static AddAppApiRequest PrepareAddAppRequest(KubeAdmissionReviewRequest review)
+        private static AddAppApiRequest PrepareAddAppRequest(KubeAdmissionReviewRequest review, bool update = false)
         {
+            IEnumerable<Container> containers = new List<Container>();
+            if (update)
+            {
+                containers = review?.GetOldContainers()?.Where(c => c.name != "kuma-sidecar");
+            }
+            else {
+                containers = review?.GetContainers()?.Where(c => c.name != "kuma-sidecar");
+            }
             var space = review?.GetResourceNamespace();
             var app = review.GetResourceName();
-            var containers = review?.GetContainers()?.Where(c => c.name != "kuma-sidecar");
             var images = string.Join(", ", containers.Select(c => c.image));
             var ports = containers?.SelectMany(c => c.ports);
             var port_string = string.Join(", ", ports.Select(p => $"{p.containerPort}/{p.protocol}"));

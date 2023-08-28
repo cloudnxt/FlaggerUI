@@ -22,39 +22,41 @@
 else
 {
 
-    <MudTable Items="@apps" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
-        <HeaderContent>
-            <MudTh>Id</MudTh>
-            <MudTh>Name</MudTh>
-            <MudTh>Namespace</MudTh>
-            <MudTh>URL</MudTh>
-            <MudTh>Image</MudTh>
-            <MudTh>Ports</MudTh>
-            <MudTh>Replica</MudTh>
-            <MudTh>Live</MudTh>
-            <MudTh>Action</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Nr">@context.Id </MudTd>
-            <MudTd DataLabel="Name"> <MudChip Color="Color.Success" @onclick="@(e => Details(@context.Id))"> @context.Name  </MudChip></MudTd>
-            <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
-            <MudTd DataLabel="Url">@context.Url </MudTd>
-            <MudTd DataLabel="Image">@context.Image</MudTd>
-            <MudTd DataLabel="ContainerPorts">@context.ContainerPorts</MudTd>
-            <MudTd DataLabel="Replicas">@context.Replicas </MudTd>
-            <MudTd DataLabel="Live"> <div class="p-3 bg-success border border-success rounded-circle" style="width:30px;"><span class=""></span></div></MudTd>
-            <MudTd>
-                @if (@context.GatesEnabled)
-                {
-                    <MudButton class="btn btn-sm" Variant="Variant.Filled" Color="Color.Secondary" @onclick="@(e => DisableAll(@context))">Disable Gates</MudButton>
-                }
-                else
-                {
-                    <MudButton class="btn btn-sm" Variant="Variant.Filled" Color="Color.Primary" @onclick="@(e => EnableAll(@context))">Enable Gates</MudButton>
-                }
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
+    <MudPaper Width="500" Elevation="10">
+        <MudTable Items="@apps" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Name</MudTh>
+                <MudTh>Namespace</MudTh>
+                <MudTh>URL</MudTh>
+                <MudTh>Image</MudTh>
+                <MudTh>Ports</MudTh>
+                <MudTh>Replica</MudTh>
+                <MudTh>Live</MudTh>
+                <MudTh>Action</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Nr">@context.Id </MudTd>
+                <MudTd DataLabel="Name"> <MudChip Color="Color.Success" @onclick="@(e => Details(@context.Id))"> @context.Name  </MudChip></MudTd>
+                <MudTd DataLabel="Namespace">@context.Namespace</MudTd>
+                <MudTd DataLabel="Url">@context.Url </MudTd>
+                <MudTd DataLabel="Image">@context.Image</MudTd>
+                <MudTd DataLabel="ContainerPorts">@context.ContainerPorts</MudTd>
+                <MudTd DataLabel="Replicas">@context.Replicas </MudTd>
+                <MudTd DataLabel="Live"> <div class="p-3 bg-success border border-success rounded-circle" style="width:30px;"><span class=""></span></div></MudTd>
+                <MudTd>
+                    @if (@context.GatesEnabled)
+                    {
+                        <MudButton class="btn btn-sm" Variant="Variant.Filled" Color="Color.Secondary" @onclick="@(e => DisableAll(@context))">Disable Gates</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton class="btn btn-sm" Variant="Variant.Filled" Color="Color.Primary" @onclick="@(e => EnableAll(@context))">Enable Gates</MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
 }
 
 @code {
