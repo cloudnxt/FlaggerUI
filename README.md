@@ -138,6 +138,47 @@ The gate will look like below.
 
 ## Webhook Integration
 
+Flagger UI, exposes some endpoint which flagger, canary can be configured to invoke in each state. We will be taking a look at the full configuration when we discuss about configuring the canary resource.
+
+* **api/Gate/check**- The endpoint is used for maintaining the state of the deployment when a new version is out. The payload have a metadata object which will contain the field to specify the webhook state 
+
+```
+- name: "start gate"
+  type: confirm-rollout
+  url: http://flagger-ui.default.svc/api/Gate/check
+  metadata:
+    Action: "pass"
+    WebhookState: "ConfirmRollout"
+```
+* **api/Event** - This Endpoint if configured to keep track of all the Event happening in Flagger for each and all deployments.
+
+```
+- name: "start gate"
+  type: confirm-rollout
+  url: http://flagger-ui.default.svc/api/Gate/check
+  metadata:
+    Action: "pass"
+    WebhookState: "ConfirmRollout"
+```
+
+* **api/Loadtest** - This endpoints allows you to configure a load for a particulat URL, it lets you specify the payload and request which needs to be send, and also the number of request.
+
+```
+- name: "load test"
+  type: rollout
+  url: http://flagger-ui.default.svc/api/Loadtest
+  metadata:
+    Action: "pass"
+    WebhookState: "rollout"
+    Method: GET
+    Url: http://podinfo-canary.default.svc:9898/healthz
+    NoOfRequests: "100"
+    Payload: ""
+```
+
+## Configuring the Full Canary Resource
+
+
 Follow the instructions provided in the [Flagger documentation](https://docs.flagger.app/usage/webhooks) to configure Flagger to send webhook events to the Manual Gates App. 
 This integration enables the app to receive deployment events and pause the deployment process for manual approval.
 
@@ -149,8 +190,9 @@ apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
   name: podinfo
-  namespace: test
+  namespace: default
 spec:
+  skipAnalysis: false
   # service mesh provider can be: kubernetes, istio, appmesh, nginx, gloo
   provider: kubernetes
   # deployment reference
@@ -161,11 +203,11 @@ spec:
   # the maximum time in seconds for the canary deployment
   # to make progress before rollback (default 600s)
   progressDeadlineSeconds: 60
-  # HPA reference (optional)
-  autoscalerRef:
-    apiVersion: autoscaling/v2beta2
-    kind: HorizontalPodAutoscaler
-    name: podinfo
+  # # HPA reference (optional)
+  # autoscalerRef:
+  #   apiVersion: autoscaling/v2beta2
+  #   kind: HorizontalPodAutoscaler
+  #   name: podinfo
   service:
     port: 9898
     portDiscovery: true
@@ -173,53 +215,67 @@ spec:
     # schedule interval (default 60s)
     interval: 30s
     # max number of failed checks before rollback
-    threshold: 2
+    threshold: 5
     # number of checks to run before rollback
     iterations: 5
     # Prometheus checks based on 
     # http_request_duration_seconds histogram
     metrics:
-      - name: request-success-rate
+      - name: "request-success-rate-custom"
+        templateRef:
+          name: request-success-rate-custom
         thresholdRange:
           min: 99
         interval: 1m
-      - name: request-duration
-        thresholdRange:
-          max: 500
-        interval: 30s
     # acceptance/load testing hooks
     webhooks:
       - name: "start gate"
         type: confirm-rollout
-        url: http://flagger-ui.default/confirm-rollout/gate/check
+        url: http://flagger-ui.default.svc/api/Gate/check
         metadata:
-          type: webhookType
-          cmd: "confirm-rollout"
+          Action: "pass"
+          WebhookState: "ConfirmRollout"
+
+      - name: "confirm-traffic-increase"
+        type: confirm-traffic-increase
+        url: http://flagger-ui.default.svc/api/Gate/check
+        metadata:
+          Action: "pass"
+          WebhookState: "ConfirmTrafficIncrease"
+          
+          
       - name: "load test"
         type: rollout
-        url: http://flagger-ui.default/confirm-rollout/gate/check
-        timeout: 15s
+        url: http://flagger-ui.default.svc/api/Loadtest
         metadata:
-          cmd: "hey -z 1m -q 5 -c 2 http://podinfo-canary.test:9898/"
-      - name: "traffic increase gate"
-        type: confirm-traffic-increase
-        url: http://flagger-ui.default/gate/check
+          Action: "pass"
+          WebhookState: "rollout"
+          Method: GET
+          Url: http://podinfo-canary.default.svc:9898/healthz
+          NoOfRequests: "100"
+          Payload: ""
+      
       - name: "promotion gate"
         type: confirm-promotion
-        url: http://flagger-ui.default/confirm-promotion/gate/check
-      - name: smoke-test
-        type: pre-rollout
-        url: http://flagger-ui.default/pre-rollout/gate/check
-        timeout: 120s
+        url: http://flagger-ui.default.svc/api/Gate/check
         metadata:
-          type: bash
-          cmd: "curl -sd 'anon' http://podinfo-canary.test:9898/token | grep token"
-      - name: load-test
-        url: http://flagger-ui.default/confirm-rollout/gate/check
-        timeout: 5s
+          Action: "pass"
+          WebhookState: "ConfirmPromotion"
+
+      - name: "Send to Events"
+        type: event
+        url: http://flagger-ui.default.svc/api/Event
         metadata:
-          type: cmd
-          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test:9898/"
+          Action: "pass"
+          WebhookState: "Event"
+
+      - name: "rollback gate"
+        type: rollback
+        url: http://flagger-ui.default.svc/api/Gate/Check
+        metadata:
+          Action: "pass"
+          WebhookState: "Rollback"
+
 
 ```
 
