@@ -19,7 +19,7 @@ Content-Type: application/json
       "resource": "deployments"
     },
     "name": "podinfo",
-    "namespace": "uploader",
+    "namespace": "default",
     "operation": "CREATE",
     "userInfo": {
       "username": "docker-for-desktop",
@@ -33,17 +33,17 @@ Content-Type: application/json
       "apiVersion": "apps/v1",
       "metadata": {
         "name": "podinfo",
-        "namespace": "uploader",
+        "namespace": "default",
         "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
         "generation": 1,
         "creationTimestamp": "2023-08-02T22:47:29Z",
         "labels": {
-          "app": "uploader-api",
+          "app": "podinfo",
           "metrics-scraper": "prom",
           "version": "v1"
         },
         "annotations": {
-          "app": "uploader-api",
+          "app": "podinfo",
           "enable-canary-gates": "true"
         }
       },
@@ -103,7 +103,7 @@ Content-Type: application/json
 
 
 
-### Create an App ###
+### Update an App ###
 
 POST http://localhost:5080/api/AdmissionWebhook
 Content-Type: application/json
@@ -124,7 +124,7 @@ Content-Type: application/json
       "resource": "deployments"
     },
     "name": "podinfo",
-    "namespace": "uploader",
+    "namespace": "default",
     "operation": "UPDATE",
     "userInfo": {
       "username": "docker-for-desktop",
@@ -138,7 +138,7 @@ Content-Type: application/json
       "apiVersion": "apps/v1",
       "metadata": {
         "name": "podinfo",
-        "namespace": "uploader",
+        "namespace": "default",
         "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
         "generation": 1,
         "creationTimestamp": "2023-08-02T22:47:29Z",
@@ -159,7 +159,7 @@ Content-Type: application/json
             "containers": [
               {
                 "name": "uploader-api",
-                "image": "rohitrustagi007/evo_uploader:0.1.3",
+                "image": "rohitrustagi007/evo_uploader:0.1.1",
                 "ports": [
                   {
                     "name": "uploader-api",
@@ -200,7 +200,7 @@ Content-Type: application/json
       "apiVersion": "apps/v1",
       "metadata": {
         "name": "podinfo",
-        "namespace": "uploader",
+        "namespace": "default",
         "uid": "8a3dea16-3c63-4428-9e2b-cb0fcbfa5bb3",
         "generation": 1,
         "creationTimestamp": "2023-08-02T22:47:29Z",
@@ -221,7 +221,7 @@ Content-Type: application/json
             "containers": [
               {
                 "name": "uploader-api",
-                "image": "rohitrustagi007/evo_uploader:0.1.1",
+                "image": "rohitrustagi007/evo_uploader:0.1.2",
                 "ports": [
                   {
                     "name": "uploader-api",
